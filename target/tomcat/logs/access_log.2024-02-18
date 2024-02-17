@@ -1,0 +1,2 @@
+0:0:0:0:0:0:0:1 - - [18/Feb/2024:00:06:20 +0800] "GET /resource_app/html/YgLogin.html HTTP/1.1" 200 2788 http-bio-8080-exec-4 2
+0:0:0:0:0:0:0:1 - - [18/Feb/2024:00:06:20 +0800] "GET /resource_app/css/login.css HTTP/1.1" 304 - http-bio-8080-exec-5 1

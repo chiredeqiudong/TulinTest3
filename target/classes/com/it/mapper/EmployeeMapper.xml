@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.mapper.EmployeeMapper">
+    <!--resultMap映射-->
+    <resultMap id="employeeResultMap" type="employee">
+        <result column="join_date" property="joinDate"/>
+    </resultMap>
+
+
+    <select id="loginSelect" resultMap="employeeResultMap">
+        select id,
+               account,
+               password,
+               name,
+               age,
+               gender,
+               role,
+               phone,
+               status,
+               join_date
+        from tb_employee
+        where account = #{account}
+          and #{password};
+    </select>
+</mapper>
