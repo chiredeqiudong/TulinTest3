@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!--css外连接-->
+    <link href="css/login.css" rel="stylesheet">
+</head>
+<h1 style="position: absolute; text-align: center;top: 10px">人力资源管理系统</h1>
+<body>
+<div id="loginDiv" style="height: 400px">
+    <div id="Login">
+        <!--登录信息表单-->
+        <el-form  ref="form" :model="user" label-width="80px">
+            <div style="color: red;text-align: center" v-if="showErrorMessage">账号或密码输入有误</div>
+            <br>
+            <el-form-item label="用户名:">
+                <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
+            </el-form-item>
+            <el-form-item label="密码:">
+                <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
+            </el-form-item>
+            <el-form-item label="记住账号:">
+                <el-checkbox v-model="checked"></el-checkbox>
+            </el-form-item>
+            <el-form-item label="登录人员:">
+                <template>
+                    <el-select v-model="user.role" placeholder="请选择角色">
+                        <el-option
+                                v-for="item in options"
+                                :key="item.value"
+                                :label="item.label"
+                                :value="item.value">
+                        </el-option>
+                    </el-select>
+                </template>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" @click="Login">登录</el-button>
+                <el-button plain native-type="reset">重置</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</div>
+</body>
+<!--导包-->
+<script src="js/axios-0.18.0.js"></script>
+<script src="js/vue.js"></script>
+<script src="element-ui/lib/index.js"></script>
+<link rel="stylesheet" href="element-ui/lib/theme-chalk/index.css">
+
+<script>
+    new Vue({
+        el: "#Login",
+        data() {
+            return {
+                //使用者
+                user: {
+                    username: '',
+                    password: '',
+                    role:'',
+                },
+                //cookie
+                checked: '',
+                //登录角色
+                options: [{
+                    value: true,
+                    label: '员工'
+                }, {
+                    value: false,
+                    label: '管理员'
+                }],
+                //login_msg
+                showErrorMessage: false,
+            }
+        },
+        //方法:
+        methods: {
+            //登录
+            Login() {
+                let _this = this;
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/login?checked=" + _this.checked,
+                    data: _this.user
+                }).then(function (resp) {
+                    if (resp.data === "error") {
+                        //登录失败
+                        _this.showError();
+                    }
+                    else {
+                        //员工
+                        if (_this.user.role === true){
+                            window.location.href = "http://localhost:8080/resource_app/home.html";
+                        }
+                        //管理员
+                        else {
+                            window.location.href = "http://localhost:8080/resource_app/home.html";
+                        }
+                    }
+                })
+            },
+            //错误信息提示
+            showError() {
+                this.showErrorMessage = true;
+                setTimeout(() => {
+                    this.showErrorMessage = false;
+                }, 3000); // 3秒后隐藏错误消息
+            }
+        }
+    })
+</script>
+
+</html>

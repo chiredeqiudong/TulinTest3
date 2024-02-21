@@ -9,10 +9,10 @@ import com.it.pojo.Employee;
 public interface EmployeeService {
     /**
      * loginSelect:登录
-     * @param account:账号
+     * @param username:用户名
      * @param password:密码
      * @return Employee对象
      */
-    Employee loginSelect(String account,String password);
+    Employee loginSelect(String username,String password);
 
 }

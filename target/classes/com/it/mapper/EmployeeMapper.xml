@@ -5,23 +5,24 @@
 <mapper namespace="com.it.mapper.EmployeeMapper">
     <!--resultMap映射-->
     <resultMap id="employeeResultMap" type="employee">
-        <result column="join_date" property="joinDate"/>
     </resultMap>
 
 
-    <select id="loginSelect" resultMap="employeeResultMap">
+    <select id="loginSelect" resultType="com.it.pojo.Employee">
         select id,
-               account,
+               username,
                password,
                name,
-               age,
                gender,
                role,
                phone,
-               status,
-               join_date
+               avatar,
+               email,
+               level
         from tb_employee
-        where account = #{account}
-          and #{password};
+        where username = #{username}
+          and password = #{password};
     </select>
+
+
 </mapper>

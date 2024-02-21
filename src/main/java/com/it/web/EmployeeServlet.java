@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Objects;
@@ -24,7 +25,7 @@ public class EmployeeServlet extends MyHttpServlet {
     /**
      * employeeService:EmployeeService的实现类对象(多态？)
      * */
-    private final EmployeeService employeeService = new EmployeeServiceImpl();
+    private final EmployeeService  employeeService = new EmployeeServiceImpl();
     /**
      * login:员工登录验证
      */
@@ -36,10 +37,11 @@ public class EmployeeServlet extends MyHttpServlet {
         String employeeJson = reader.readLine();
         Employee tempEmployee = JSON.parseObject(employeeJson, Employee.class);
         String checked = req.getParameter("checked");
-        String account = tempEmployee.getAccount();
+        String username = tempEmployee.getUsername();
         String password = tempEmployee.getPassword();
+        String role = tempEmployee.getRole();
         // 数据库查询
-        Employee employee = employeeService.loginSelect(account, password);
+        Employee employee = employeeService.loginSelect(username, password);
         if (Objects.isNull(employee)){
             //输入的账号密码错误
             resp.getWriter().write("error");
@@ -50,7 +52,7 @@ public class EmployeeServlet extends MyHttpServlet {
             String judge = "true";
             if (judge.equals(checked)){
                 //创建cookie
-                Cookie cookie1 = new Cookie("account",account);
+                Cookie cookie1 = new Cookie("username",username);
                 Cookie cookie2 = new Cookie("password",password);
                 //三天时间
                 cookie1.setMaxAge(60*60*24*3);
@@ -59,14 +61,25 @@ public class EmployeeServlet extends MyHttpServlet {
                 resp.addCookie(cookie1);
                 resp.addCookie(cookie2);
             }
-            //登录成功
-            resp.getWriter().write("success");
-            //请求转发\重定向employee数据
+            //会话存储
+            HttpSession session = req.getSession();
+            session.setAttribute("employee",employee);
         }
-
-
-
-
+    }
+    /**
+     * firstPage:首页请求
+     * */
+    public void firstPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException,IOException{
+        //测试是否调用该方法
+        System.out.println("调用firstPage方法");
+        //获取会话技术
+        HttpSession session = req.getSession();
+        Employee employee = (Employee) session.getAttribute("employee");
+        //转为json
+        String jsonString = JSON.toJSONString(employee);
+        //响应数据
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
     }
 
 }

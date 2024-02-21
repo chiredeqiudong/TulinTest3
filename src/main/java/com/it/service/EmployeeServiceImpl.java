@@ -15,19 +15,17 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * sqlFactory:SqlSessionFactory的接口对象,用于创建sqlSession对象
      */
-    private final SqlSessionFactory sqlFactory = SqlSessionFactoryUtil.getFactory();
-
-
+    private  final SqlSessionFactory sqlFactory = SqlSessionFactoryUtil.getFactory();
     /**
      * loginSelect:登录
-     * @param account:账号
+     * @param username:用户名
      * @param password:密码
      */
     @Override
-    public Employee loginSelect(String account, String password) {
+    public Employee loginSelect(String username, String password) {
         SqlSession sqlSession = sqlFactory.openSession();
         EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
-        Employee employee = mapper.loginSelect(account, password);
+        Employee employee = mapper.loginSelect(username, password);
         sqlSession.close();
         return employee;
     }

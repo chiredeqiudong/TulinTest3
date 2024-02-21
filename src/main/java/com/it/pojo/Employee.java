@@ -1,35 +1,29 @@
 package com.it.pojo;
-
-import java.sql.Date;
-
 /**
  * @author zy293
  * Employee:员工表数据
  * id:员工编号
- * account:账户
+ * username:用户名
  * password:密码
  * name:姓名
- * age:年龄
+ * avatar;头像
  * gender:性别
- * role:角色
+ * role:角色标识
  * phone:电话号码
- * status:在职、离职
- * joinDate:入职日期
+ * email:邮箱
+ * level:身份
  */
 public class Employee {
     private Integer id;
-    private String account;
+    private String username;
     private String password;
     private String name;
-    private Integer age;
+    private String avatar;
     private String gender;
     private String role;
-    private Integer phone;
-    private String status;
-    private Date joinDate;
-
-    public Employee() {
-    }
+    private String phone;
+    private String email;
+    private String level;
 
     public Integer getId() {
         return id;
@@ -39,12 +33,12 @@ public class Employee {
         this.id = id;
     }
 
-    public String getAccount() {
-        return account;
+    public String getUsername() {
+        return username;
     }
 
-    public void setAccount(String account) {
-        this.account = account;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getPassword() {
@@ -63,12 +57,12 @@ public class Employee {
         this.name = name;
     }
 
-    public Integer getAge() {
-        return age;
+    public String getAvatar() {
+        return avatar;
     }
 
-    public void setAge(Integer age) {
-        this.age = age;
+    public void setAvatar(String avatar) {
+        this.avatar = avatar;
     }
 
     public String getGender() {
@@ -87,27 +81,27 @@ public class Employee {
         this.role = role;
     }
 
-    public Integer getPhone() {
+    public String getPhone() {
         return phone;
     }
 
-    public void setPhone(Integer phone) {
+    public void setPhone(String phone) {
         this.phone = phone;
     }
 
-    public String getStatus() {
-        return status;
+    public String getEmail() {
+        return email;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public Date getJoinDate() {
-        return joinDate;
+    public String getLevel() {
+        return level;
     }
 
-    public void setJoinDate(Date joinDate) {
-        this.joinDate = joinDate;
+    public void setLevel(String level) {
+        this.level = level;
     }
 }
