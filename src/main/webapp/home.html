@@ -77,21 +77,23 @@
         <el-container style="height: 500px; border: 1px solid rgb(235,248,249)">
             <!--侧边栏-->
             <el-aside width="200px" style="background-color: rgb(255,255,255)">
-                <el-menu :default-openeds="['1','2','2-3']">
-                    <el-menu-item>
-                        <template slot="title"><i class="el-icon-s-home"></i>系统首页</template>
+                <el-menu :default-openeds="['0','1','2','2-3']" :default-active="activeIndex" @select="menuSelect">
+                    <el-menu-item index="0"><!--@click="selectSystemHome"-->
+                        <template slot="title">
+                            <i class="el-icon-s-home">系统首页</i>
+                        </template>
                     </el-menu-item>
                     <el-submenu index="1">
-                        <template slot="title"><i class="el-icon-s-custom"></i>人事管理</template>
-                        <el-menu-item-group title="个人信息">
-                            <el-menu-item index="1-1">身份信息</el-menu-item>
+                        <template slot="title"><i class="el-icon-s-custom">人事管理</i></template>
+                        <el-menu-item-group title="身份信息">
+                            <el-menu-item index="1-1">个人信息</el-menu-item>
                             <el-menu-item index="1-2">薪资信息</el-menu-item>
                             <el-menu-item index="1-3">考勤记录</el-menu-item>
                             <el-menu-item index="1-4">请假记录</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="2">
-                        <template slot="title"><i class="el-icon-menu"></i>工作台</template>
+                        <template slot="title"><i class="el-icon-menu">工作台</i></template>
                         <el-menu-item-group title="功能信息">
                             <el-menu-item index="2-1">请假申请</el-menu-item>
                             <el-menu-item index="2-2">离职申请</el-menu-item>
@@ -104,12 +106,12 @@
                     </el-submenu>
                 </el-menu>
             </el-aside>
-            <!--内容框-->
-            <el-main>
+            <!--首页-->
+            <el-main v-if="pages[0] === true">
                 <el-row>
                     <el-col :span="24">
                         <div style="background: white ;height: 50px;" v-model="employee">
-                            您好,{{employee.name}}!欢迎使用本系统
+                            您好，{{employee.name}}！欢迎使用本系统
                         </div>
                     </el-col>
                 </el-row>
@@ -123,20 +125,45 @@
                                         <p>
                                             2023年12月31日,放假!2023年12月31日,放假！2023年12月31日,放假！2023年12月31日,放假！
                                         </p>
-
                                     </el-carousel-item>
                                 </el-carousel>
                             </div>
                         </el-col>
                     </el-row>
-                    <br>
-                    <el-row>
-                        <el-col :span="24">
-                            <div style="background: white ;height: 50px;" v-model="employee">
-                                您好,{{employee.name}}!欢迎使用本系统
-                            </div>
-                        </el-col>
-                    </el-row>
+            </el-main>
+            <!--个人信息-->
+            <el-main v-if="pages[1] === true">
+                <el-row>
+                    <el-col :span="24">
+                        <div style="background: white ;height: 600px;width: 650px" v-model="employee">
+                            <el-form ref="form" :model="employee" label-width="80px" :rules="rules"
+                                     style="color: black; font-weight: bold;">
+                                <!--头像-->
+                                <el-form-item label="用户名:">
+                                    <el-input :disabled="true" v-model="employee.username" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="姓名:" prop="name">
+                                    <el-input v-model="employee.name" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="电话:" prop="phone">
+                                    <el-input v-model="employee.phone" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮箱:" prop="email">
+                                    <el-input v-model="employee.email" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="部门:">
+                                    <el-input :disabled="true" v-model="employee.level" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="身份:">
+                                    <el-input :disabled="true" v-model="employee.role" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="PolishInfo">保存信息</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </el-col>
+                </el-row>
             </el-main>
         </el-container>
     </el-container>
@@ -169,27 +196,98 @@
                     email: '',
                     level: '',
                 },
+                //默认选项
+                activeIndex: '0',
+                //不同页面展示
+                pages: [false, false, false, false, false, false, false, false, false],
+                //表单数据验证
+                rules: {
+                    name: [
+                        {required: true, message: '姓名不能为空', trigger: 'blur'},
+                        {min: 2, message: '至少 2 个字符', trigger: 'blur'}
+                    ],
+                    phone: [
+                        {required: true, message: '电话不能为空', trigger: 'blur'},
+                        {min: 11, max: 11, message: '长度为11个数字', trigger: 'blur'}
+                    ],
+                    email: [
+                        {required: true, message: '邮箱不能为空', trigger: 'blur'}
+                    ],
+                },
             }
         },
         //(生命周期函数)页面加载完成,发送异步请求,获取初始数据
         mounted() {
-            this.showPage();
+            this.showMessage(); // 登录成功提示
+            this.selectSystemHome(); //刷新页面执行
         },
         methods: {
-            //首页函数
-            showPage() {
-                let _this = this;
+            //登录成功信息展示
+            showMessage() {
+                // 读取本地存储中的登录成功的信息
+                const loginSuccess = localStorage.getItem('loginSuccess');
+                if (loginSuccess === 'true') {
+                    //消息
+                    this.$message({
+                        message: '登录成功',
+                        type: 'success'
+                    });
+                    // 清除本地存储中的登录成功的信息
+                    localStorage.removeItem('loginSuccess');
+                }
+            },
+            //菜单选项功能分发
+            menuSelect(key, keyPath) {
+                //key:选项索引，keyPath:索引路径数组
+                switch (key) {
+                    case '0':
+                        this.selectSystemHome();
+                        break;
+                    case '1-1':
+                        this.showInfo();
+                        break;
+                    default:
+                        window.alert("keyPath:" + keyPath);
+                }
+            },
+            //页面展示函数
+            showPages(index) {
+                for (let i = 0; i < this.pages.length; i++) {
+                    this.pages[i] = i === index;
+                }
+            },
+            //系统首页函数
+            selectSystemHome() {
                 axios({
                     method: "get",
                     url: "http://localhost:8080/resource_app/employee/firstPage",
-                }).then(function (resp) {
+                }).then((resp) => {
+                    //首页展示
+                    this.showPages(0);
                     //响应数据
-                    _this.employee = resp.data;
+                    this.employee = resp.data;
+                    //公告数据
                 })
+            },
+            //展示个人信息
+            showInfo() {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/employee/firstPage",
+                }).then((resp) => {
+                    //首页展示
+                    this.showPages(1);
+                    //响应数据
+                    this.employee = resp.data;
+                })
+            },
+            //修改个人信息
+            PolishInfo() {
+
+
             }
 
         }
-
     })
 </script>
 

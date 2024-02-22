@@ -11,9 +11,7 @@
 <div id="loginDiv" style="height: 400px">
     <div id="Login">
         <!--登录信息表单-->
-        <el-form  ref="form" :model="user" label-width="80px">
-            <div style="color: red;text-align: center" v-if="showErrorMessage">账号或密码输入有误</div>
-            <br>
+        <el-form ref="form" :model="user" label-width="80px">
             <el-form-item label="用户名:">
                 <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
             </el-form-item>
@@ -58,7 +56,7 @@
                 user: {
                     username: '',
                     password: '',
-                    role:'',
+                    role: '',
                 },
                 //cookie
                 checked: '',
@@ -78,19 +76,19 @@
         methods: {
             //登录
             Login() {
-                let _this = this;
                 axios({
                     method: "post",
-                    url: "http://localhost:8080/resource_app/employee/login?checked=" + _this.checked,
-                    data: _this.user
-                }).then(function (resp) {
+                    url: "http://localhost:8080/resource_app/employee/login?checked=" + this.checked,
+                    data: this.user
+                }).then((resp) => {
                     if (resp.data === "error") {
                         //登录失败
-                        _this.showError();
-                    }
-                    else {
+                        this.showError();
+                    } else {
+                        // 将登录成功的信息存储到本地存储中
+                        localStorage.setItem('loginSuccess', 'true');
                         //员工
-                        if (_this.user.role === true){
+                        if (this.user.role === true) {
                             window.location.href = "http://localhost:8080/resource_app/home.html";
                         }
                         //管理员
@@ -102,11 +100,9 @@
             },
             //错误信息提示
             showError() {
-                this.showErrorMessage = true;
-                setTimeout(() => {
-                    this.showErrorMessage = false;
-                }, 3000); // 3秒后隐藏错误消息
-            }
+                this.$message.error('用户不存在');
+            },
+
         }
     })
 </script>
