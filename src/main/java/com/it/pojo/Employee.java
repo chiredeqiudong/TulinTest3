@@ -11,7 +11,7 @@ package com.it.pojo;
  * role:角色标识
  * phone:电话号码
  * email:邮箱
- * level:身份
+ * department:部门
  */
 public class Employee {
     private Integer id;
@@ -23,7 +23,7 @@ public class Employee {
     private String role;
     private String phone;
     private String email;
-    private String level;
+    private String department;
 
     public Integer getId() {
         return id;
@@ -97,11 +97,11 @@ public class Employee {
         this.email = email;
     }
 
-    public String getLevel() {
-        return level;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setLevel(String level) {
-        this.level = level;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 }

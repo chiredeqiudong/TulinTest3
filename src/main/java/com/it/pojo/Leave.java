@@ -8,6 +8,7 @@ import java.sql.Date;
  * id:主键
  * employeeId:员工id
  * leaveType:请假类型
+ * name:员工姓名
  * startDate:请假开始日期
  * endDate:请假结束日期
  * reason:请假原因
@@ -16,6 +17,7 @@ import java.sql.Date;
 public class Leave {
     private Integer id;
     private Integer employeeId;
+    private String name;
     private String leaveType;
     private Date startDate;
     private Date endDate;
@@ -36,6 +38,14 @@ public class Leave {
 
     public void setEmployeeId(Integer employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getLeaveType() {

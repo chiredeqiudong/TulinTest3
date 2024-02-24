@@ -4,8 +4,24 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.it.mapper.EmployeeMapper">
     <!--resultMap映射-->
-    <resultMap id="employeeResultMap" type="employee">
+    <resultMap id="employeeSalary" type="salary">
+        <result column="send_date" property="sendDate"/>
+        <result column="base_salary" property="baseSalary"/>
+        <result column="attendance_bonus" property="attendanceBonus"/>
+        <result column="performance_pay" property="performancePay"/>
     </resultMap>
+    <resultMap id="employeeAttendance" type="attendance">
+        <result column="absence_record" property="absenceRecord"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+    <resultMap id="employeeLeave" type="leave">
+        <result column="leave_type" property="leaveType"/>
+        <result column="leave_status" property="leaveStatus"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+
 
 
     <select id="loginSelect" resultType="com.it.pojo.Employee">
@@ -18,11 +34,156 @@
                phone,
                avatar,
                email,
-               level
+               department
         from tb_employee
         where username = #{username}
           and password = #{password};
     </select>
+    <update id="updateInfo">
+        update tb_employee
+        set avatar = #{avatar},
+            name   = #{name},
+            gender = #{gender},
+            phone  = #{phone},
+            email  = #{email}
+        where id = #{id};
+    </update>
+    <select id="showSalary" resultMap="employeeSalary">
+        select name, department, send_date, money, base_salary, attendance_bonus, performance_pay
+        from tb_salary
+        where employee_id = #{employeeId}
+          and send_date like #{page.dateValue}
+        order by send_date, money desc
+        limit #{begin},10;
+    </select>
+    <select id="idSelect" resultType="com.it.pojo.Employee">
+        select id,
+               username,
+               password,
+               name,
+               gender,
+               role,
+               phone,
+               avatar,
+               email,
+               department
+        from tb_employee
+        where id = #{employeeId};
+    </select>
+    <select id="selectCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_salary
+        where employee_id = #{employeeId}
+          and send_date like #{page.dateValue}
+        order by send_date, money desc;
+    </select>
+    <select id="showAttendance" resultMap="employeeAttendance">
+        select name, date, absence_record
+        from tb_attendance
+        where employee_id = #{employeeId} and absence_record in
+        <foreach collection="attendanceValues" item="value" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+        order by date
+        limit #{begin},10;
+
+    </select>
+    <select id="attendanceCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_attendance
+        where employee_id = #{employeeId} and absence_record in
+        <foreach collection="attendanceValues" item="value" open="(" close=")" separator=",">
+            #{value}
+        </foreach>
+        order by date;
+    </select>
+    <select id="showLeave" resultMap="employeeLeave">
+        select name,leave_type, start_date, end_date, reason, leave_status
+        from tb_leave
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and leave_status != '未处理'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and reason like #{reason}
+            </if>
+            <if test="page.dateValue != null ">
+                and start_date like #{page.dateValue}
+            </if>
+        </where>
+        order by start_date
+        limit #{begin},10;
+    </select>
+    <select id="leaveCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_leave
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and leave_status != '未处理'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and reason like #{reason}
+            </if>
+            <if test="page.dateValue != null ">
+                and start_date like #{page.dateValue}
+            </if>
+        </where>
+    </select>
+    <select id="showUnLeave" resultMap="employeeLeave">
+        select id,name,leave_type, start_date, end_date, reason, leave_status
+        from tb_leave
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and leave_status = '未处理'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and reason like #{reason}
+            </if>
+            <if test="page.dateValue != null ">
+                and start_date like #{page.dateValue}
+            </if>
+        </where>
+        order by start_date
+        limit #{begin},10;
+    </select>
+    <select id="unLeaveCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_leave
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and leave_status = '未处理'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and reason like #{reason}
+            </if>
+            <if test="page.dateValue != null ">
+                and start_date like #{page.dateValue}
+            </if>
+        </where>
+    </select>
+    <delete id="deleteByLeaveId">
+        delete
+        from tb_leave
+        where id = #{id};
+    </delete>
+
+    <insert id="addLeave">
+        insert into tb_leave (employee_id, name, leave_type, start_date, end_date, reason, leave_status)
+        values (#{employeeId},#{name},#{leaveType},#{startDate},#{endDate},#{reason},#{leaveStatus});
+    </insert>
+
 
 
 </mapper>

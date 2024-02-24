@@ -3,6 +3,7 @@ package com.it.pojo;
 /**
  * @author zy293
  * Salary:薪水表
+ * id:主键
  * employeeId:员工id
  * money:工资
  * baseSalary:底薪
@@ -12,13 +13,13 @@ package com.it.pojo;
 public class Salary {
     private Integer id;
     private Integer employeeId;
+    private String name;
+    private String department;
+    private String sendDate;
     private double money;
     private double baseSalary;
     private double attendanceBonus;
     private double performancePay;
-
-    public Salary() {
-    }
 
     public Integer getId() {
         return id;
@@ -34,6 +35,30 @@ public class Salary {
 
     public void setEmployeeId(Integer employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getSendDate() {
+        return sendDate;
+    }
+
+    public void setSendDate(String sendDate) {
+        this.sendDate = sendDate;
     }
 
     public double getMoney() {

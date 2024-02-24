@@ -35,6 +35,18 @@
     .el-carousel__item:nth-child(2n+1) {
         background-color: rgb(204, 230, 200);
     }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
 </style>
 <body>
 <div id="home">
@@ -58,12 +70,12 @@
                 </el-col>
                 <el-col :span="8" style="text-align: right">
                     <el-dropdown>
-                        <span class="el-dropdown-link" v-model="employee">
-                             <el-avatar :src="employee.avatar" :size="large">
+                        <span class="el-dropdown-link">
+                             <el-avatar v-model="employee" :src="employee.avatar" :size="50">
                              </el-avatar>
                         </span>
-                        <span style="font-size: 20px;text-align: center">
-                            {{employee.name}}
+                        <span style="font-size: 20px;">
+                            {{employee.username}}
                         </span>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item>个人信息</el-dropdown-item>
@@ -109,65 +121,436 @@
             <!--首页-->
             <el-main v-if="pages[0] === true">
                 <el-row>
-                    <el-col :span="24">
-                        <div style="background: white ;height: 50px;" v-model="employee">
-                            您好，{{employee.name}}！欢迎使用本系统
-                        </div>
+                    <el-col :span="24" v-model="employee" style="background: white ;height: 50px;">
+                        您好，{{employee.name}}！欢迎使用本系统
                     </el-col>
                 </el-row>
-                <tr>
-                    <el-row>
-                        <el-col :span="24">
-                            <div style="background: white ;height: 350px;" v-model="employee">
-                                <h1 style="text-align: center">公告信息</h1>
-                                <el-carousel>
-                                    <el-carousel-item v-for="item in 5" :key="item">
-                                        <p>
-                                            2023年12月31日,放假!2023年12月31日,放假！2023年12月31日,放假！2023年12月31日,放假！
-                                        </p>
-                                    </el-carousel-item>
-                                </el-carousel>
-                            </div>
-                        </el-col>
-                    </el-row>
+                <br>
+                <el-row>
+                    <el-col :span="24" v-model="employee" style="background: white ;height: 350px;">
+                        <h1 style="text-align: center">公告信息</h1>
+                        <el-carousel>
+                            <el-carousel-item v-for="item in 5" :key="item">
+                                <p>
+                                    2023年12月31日,放假!2023年12月31日,放假！2023年12月31日,放假！2023年12月31日,放假！
+                                </p>
+                            </el-carousel-item>
+                        </el-carousel>
+                    </el-col>
+                </el-row>
             </el-main>
             <!--个人信息-->
             <el-main v-if="pages[1] === true">
                 <el-row>
                     <el-col :span="24">
-                        <div style="background: white ;height: 600px;width: 650px" v-model="employee">
-                            <el-form ref="form" :model="employee" label-width="80px" :rules="rules"
+                        <div style="background: white ;height: 650px;width: 650px">
+                            <el-form ref="form" :model="info" label-width="80px" :rules="rules"
                                      style="color: black; font-weight: bold;">
                                 <!--头像-->
-                                <el-form-item label="用户名:">
-                                    <el-input :disabled="true" v-model="employee.username" style="width: 300px;"></el-input>
+                                <el-form-item>
+                                    <el-upload
+                                            class="avatar-uploader"
+                                            action=""
+                                            :show-file-list="false"
+                                            :on-success="handleAvatarSuccess"
+                                            :before-upload="beforeAvatarUpload">
+                                        <img :src="info.avatar" alt="Avatar" style="width: 110px; height: 110px;"/>
+                                    </el-upload>
                                 </el-form-item>
-                                <el-form-item label="姓名:" prop="name">
-                                    <el-input v-model="employee.name" style="width: 300px;"></el-input>
+                                <el-form-item label="用户名:" prop="username">
+                                    <el-input v-model="info.username" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="姓名:">
+                                    <el-input :disabled="true" v-model="info.name" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item label="性别:" prop="gender">
+                                    <el-input v-model="info.gender" style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item label="电话:" prop="phone">
-                                    <el-input v-model="employee.phone" style="width: 300px;"></el-input>
+                                    <el-input v-model="info.phone" style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item label="邮箱:" prop="email">
-                                    <el-input v-model="employee.email" style="width: 300px;"></el-input>
+                                    <el-input v-model="info.email" style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item label="部门:">
-                                    <el-input :disabled="true" v-model="employee.level" style="width: 300px;"></el-input>
+                                    <el-input :disabled="true" v-model="info.department"
+                                              style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item label="身份:">
-                                    <el-input :disabled="true" v-model="employee.role" style="width: 300px;"></el-input>
+                                    <el-input :disabled="true" v-model="info.role" style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item>
-                                    <el-button type="primary" @click="PolishInfo">保存信息</el-button>
+                                    <el-button type="primary" @click="polishInfo">保存信息</el-button>
                                 </el-form-item>
                             </el-form>
                         </div>
                     </el-col>
                 </el-row>
             </el-main>
+            <!--薪资信息-->
+            <el-main v-if="pages[2] === true">
+                <el-row>
+                    <el-col :span="24" v-model="employee" style="background: white ;height: 50px;">
+                        <div class="block">
+                            <span class="demonstration">日期:</span>
+                            <el-date-picker
+                                    v-model="pageBean.dateValue"
+                                    type="month"
+                                    value-format="yyyy-MM"
+                                    placeholder="选择日期">
+                            </el-date-picker>
+                            <el-button type="primary" @click="showSalary">查找</el-button>
+                        </div>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--薪资表单-->
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="salary"
+                                    style="width: 100%">
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="所属部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="发放日期"
+                                        prop="sendDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="底薪"
+                                        prop="baseSalary"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="满勤"
+                                        prop="attendanceBonus"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="业绩"
+                                        prop="performancePay"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="发放薪资"
+                                        prop="money"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange1"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--考勤信息-->
+            <el-main v-if="pages[3] === true">
+                <el-row>
+                    <el-col :span="24" v-model="employee" style="background: white ;height: 50px;">
+                        <template>
+                            <span class="demonstration">类型:</span>
+                            <el-select v-model="attendanceValues" multiple placeholder="请选择类型"
+                                       style="width: 250px">
+                                <el-option
+                                        v-for="index in attendanceOptions"
+                                        :key="index.value"
+                                        :label="index.label"
+                                        :value="index.value">
+                                </el-option>
+                            </el-select>
+                            <el-button type="primary" @click="showAttendance">查找</el-button>
+                        </template>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--考勤表单-->
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="attendance"
+                                    style="width: 100%">
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="日期"
+                                        prop="date"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="考勤记录"
+                                        prop="absenceRecord"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange2"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--请假信息-->
+            <el-main v-if="pages[4] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-form :inline="true" :model="pageBean" class="demo-form-inline">
+                            <span>请假原因:</span>
+                            <el-form-item>
+                                <el-input v-model="reason" clearable placeholder="请输入请假原因"></el-input>
+                            </el-form-item>
+                            <el-form-item>
+                                <span>日期:</span>
+                                <el-date-picker
+                                        v-model="pageBean.dateValue"
+                                        type="month"
+                                        value-format="yyyy-MM"
+                                        placeholder="请输入日期">
+                                </el-date-picker>
+                            </el-form-item>
+                            <el-form-item>
+                                <el-button type="primary" @click="showLeave">查找</el-button>
+                            </el-form-item>
+                        </el-form>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--请假表单-->
+                <el-row>
+                    <el-col :span="24" v-model="pageBean" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="leave"
+                                    style="width: 100%">
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假类型"
+                                        prop="leaveType"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假原因"
+                                        prop="reason"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假开始时间"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假结束时间"
+                                        prop="endDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="审核状态"
+                                        prop="leaveStatus"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange2"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--请假申请-->
+            <el-main v-if="pages[5] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-col :span="24" style="background: white ;height: 50px">
+                                <el-form :inline="true" :model="pageBean" class="demo-form-inline">
+                                    <span>请假原因:</span>
+                                    <el-form-item>
+                                        <el-input v-model="reason" clearable placeholder="请输入请假原因"></el-input>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <span>日期:</span>
+                                        <el-date-picker
+                                                v-model="pageBean.dateValue"
+                                                type="month"
+                                                value-format="yyyy-MM"
+                                                placeholder="请输入日期">
+                                        </el-date-picker>
+                                    </el-form-item>
+                                    <el-form-item>
+                                        <el-button type="primary" @click="showUnLeave">查 找</el-button>
+                                    </el-form-item>
+                                </el-form>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--请假未处理表单-->
+                <el-row>
+                    <el-col :span="24" v-model="pageBean" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="leave"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假类型"
+                                        prop="leaveType"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假原因"
+                                        prop="reason"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假开始时间"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假结束时间"
+                                        prop="endDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="审核状态"
+                                        prop="leaveStatus"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        align="center">
+                                    <!--修改(当前数据id)、单个删除-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain @click="deleteLeave(scope.row)">撤销申请
+                                        </el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange2"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--请假申请功能-->
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-col :span="24" style="background: white ;height: 50px">
+                                <span>请假申请:</span>
+                                <el-button type="primary" @click="dialogFormVisible = true">申 请 表</el-button>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                    <!--对话框dialog-->
+                    <el-dialog title="请假申请" :visible.sync="dialogFormVisible">
+                        <el-form :model="leaveTable">
+                            <el-form-item label="员工ID" :label-width="formLabelWidth" v-if="false">
+                                <el-input v-model="leaveTable.employeeId = employee.id"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名" :label-width="formLabelWidth">
+                                <el-input v-model="leaveTable.name" clearable autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item label="请假类型" :label-width="formLabelWidth">
+                                <el-select v-model="leaveTable.leaveType" placeholder="请选择请假类型">
+                                    <el-option label="事假" value="事假"></el-option>
+                                    <el-option label="病假" value="病假"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="请假时间" :label-width="formLabelWidth">
+                                <el-date-picker type="date" placeholder="开始日期" v-model="leaveTable.startDate"
+                                                style="width: 215px"></el-date-picker>
+                                <span>--</span>
+                                <el-date-picker type="date" placeholder="结束日期" v-model="leaveTable.endDate"
+                                                style="width: 215px"></el-date-picker>
+                            </el-form-item>
+                            <el-form-item label="请假原因" :label-width="formLabelWidth">
+                                <el-input type="textarea" v-model="leaveTable.reason" clearable
+                                          autocomplete="off"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogFormVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="addLeave">确 定</el-button>
+                        </div>
+                    </el-dialog>
+                </el-row>
+            </el-main>
         </el-container>
     </el-container>
-
 </div>
 </body>
 
@@ -180,7 +563,7 @@
 <!--Vue-->
 <script>
     new Vue({
-        el: "#home",
+        el: '#home',
         data() {
             return {
                 //员工数据
@@ -194,17 +577,46 @@
                     role: '',
                     phone: '',
                     email: '',
-                    level: '',
+                    department: '',
                 },
+                //员工信息
+                info: {
+                    id: '',
+                    username: '',
+                    password: '',
+                    name: '',
+                    avatar: '',
+                    gender: '',
+                    role: '',
+                    phone: '',
+                    email: '',
+                    department: '',
+                },
+                //请假表
+                leaveTable: {
+                    employeeId: '',
+                    name: '',
+                    leaveType: '',
+                    reason: '',
+                    startDate: '',
+                    endDate: '',
+                },
+                //薪资信息
+                salary: [],
+                //考勤信息
+                attendance: [],
+                //考勤类型值数组
+                attendanceValues: [], //初始全部查询
+                //请假数据、原因
+                leave: [],
+                reason: '',
                 //默认选项
                 activeIndex: '0',
-                //不同页面展示
-                pages: [false, false, false, false, false, false, false, false, false],
                 //表单数据验证
                 rules: {
-                    name: [
-                        {required: true, message: '姓名不能为空', trigger: 'blur'},
-                        {min: 2, message: '至少 2 个字符', trigger: 'blur'}
+                    username: [
+                        {required: true, message: '用户名不能为空', trigger: 'blur'},
+                        {max: 10, message: '不能超过10个字符', trigger: 'blur'}
                     ],
                     phone: [
                         {required: true, message: '电话不能为空', trigger: 'blur'},
@@ -213,14 +625,41 @@
                     email: [
                         {required: true, message: '邮箱不能为空', trigger: 'blur'}
                     ],
+                    gender: [
+                        {required: true, message: '性别不能为空', trigger: 'blur'},
+                        {min: 1, max: 1, message: '男 或 女', trigger: 'blur'}]
                 },
+                //pageBean
+                pageBean: {
+                    dateValue: '',//日期值
+                    currentPage: '1', //当前页码
+                },
+                //总条目数
+                tollCount: '',
+                //考勤选择器
+                attendanceOptions: [{
+                    value: '迟到',
+                    label: '迟到'
+                }, {
+                    value: '早退',
+                    label: '早退'
+                }, {
+                    value: '缺勤',
+                    label: '缺勤'
+                }],
+                //请假dialog
+                dialogFormVisible: false,
+                formLabelWidth: '120px',
+                //不同页面展示
+                pages: [false, false, false, false, false, false, false, false, false],
             }
         },
         //(生命周期函数)页面加载完成,发送异步请求,获取初始数据
         mounted() {
             this.showMessage(); // 登录成功提示
             this.selectSystemHome(); //刷新页面执行
-        },
+        }
+        ,
         methods: {
             //登录成功信息展示
             showMessage() {
@@ -246,16 +685,40 @@
                     case '1-1':
                         this.showInfo();
                         break;
+                    case '1-2':
+                        this.showSalary();
+                        break;
+                    case '1-3':
+                        this.showAttendance();
+                        break;
+                    case '1-4':
+                        this.showLeave();
+                        break;
+                    case '2-1':
+                        this.showUnLeave();
+                        break;
                     default:
                         window.alert("keyPath:" + keyPath);
                 }
-            },
+            }
+            ,
             //页面展示函数
             showPages(index) {
                 for (let i = 0; i < this.pages.length; i++) {
                     this.pages[i] = i === index;
                 }
-            },
+            }
+            ,
+            //根据员工id查找
+            idSelect(id) {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/employee/idSelect?employeeId=" + id,
+                }).then((resp) => {
+                    this.employee = resp.data;
+                })
+            }
+            ,
             //系统首页函数
             selectSystemHome() {
                 axios({
@@ -266,9 +729,10 @@
                     this.showPages(0);
                     //响应数据
                     this.employee = resp.data;
-                    //公告数据
+                    this.info = resp.data;
                 })
-            },
+            }
+            ,
             //展示个人信息
             showInfo() {
                 axios({
@@ -280,13 +744,182 @@
                     //响应数据
                     this.employee = resp.data;
                 })
+            }
+            ,
+            //展示薪资信息
+            showSalary() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showSalary?employeeId=" + this.employee.id,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //employee的数据刷新
+                    this.idSelect(this.employee.id);
+                    //薪资页面展示
+                    this.showPages(2);
+                    //响应salary、tallCount数据
+                    this.salary = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
+            //展示考勤记录
+            showAttendance() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showAttendance?employeeId=" + this.employee.id + "&currentPage=" + this.pageBean.currentPage,
+                    data: this.attendanceValues,
+                }).then((resp) => {
+                    //employee的数据刷新
+                    this.idSelect(this.employee.id);
+                    //考勤页面展示
+                    this.showPages(3);
+                    //获取响应数据
+                    this.attendance = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
+            //请假记录
+            showLeave() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showLeave?employeeId=" + this.employee.id + "&reason=" + this.reason,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //获取请假数据、刷新employee数据、页面显示
+                    this.idSelect(this.employee.id);
+                    this.showPages(4);
+                    this.leave = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
+            //请假申请未处理表,
+            showUnLeave() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showUnLeave?employeeId=" + this.employee.id + "&reason=" + this.reason,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //获取请假数据、刷新employee数据、页面显示
+                    this.idSelect(this.employee.id);
+                    this.showPages(5);
+                    this.leave = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
             },
             //修改个人信息
-            PolishInfo() {
+            polishInfo() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/polishInfo",
+                    data: this.info,
+                }).then((resp) => {
+                    if (resp.data === 'success') {
+                        //刷新数据
+                        this.employee = this.info;
+                    }
+                })
 
-
-            }
-
+            },
+            //撤销请假申请
+            deleteLeave(row) {
+                //弹框提示，是否删除
+                this.$confirm('此操作将撤销请假申请, 是否确定?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: "get",
+                        url: "http://localhost:8080/resource_app/employee/deleteLeave?id=" + row.id, //该行数据的主键
+                    }).then((resp) => {
+                        if (resp.data === "success") {
+                            //刷新数据,信息提示
+                            this.showUnLeave();
+                            this.message1();
+                        } else {
+                            this.message2();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            //请假申请表
+            addLeave() {
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/employee/addLeave",
+                    data:this.leaveTable
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        //关闭对话框、刷新数据、成功提示
+                        this.dialogFormVisible = false;
+                        this.showUnLeave();
+                        this.message3();
+                    }
+                    else {
+                        this.message4();
+                    }
+                })
+            },
+            //头像上传
+            handleAvatarSuccess(res, file) {
+                this.info.avatar = URL.createObjectURL(file.raw);
+            },
+            beforeAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
+            //当前页查询;
+            handleCurrentChange1(val) {
+                this.pageBean.currentPage = val;//重新设置当前页码
+                //查找,重置页数
+                this.showSalary();
+            },
+            handleCurrentChange2(val) {
+                this.pageBean.currentPage = val;//重新设置当前页码
+                //查找,重置页数
+                this.showAttendance();
+            },
+            //消息提示
+            message1() {
+                this.$message({
+                    showClose: true,
+                    message: '撤销成功',
+                    type: 'success'
+                });
+            },
+            message2() {
+                this.$message({
+                    showClose: true,
+                    message: '撤销失败',
+                    type: 'error'
+                });
+            },
+            message3() {
+                this.$message({
+                    showClose: true,
+                    message: '申请成功',
+                    type: 'success'
+                });
+            },
+            message4() {
+                this.$message({
+                    showClose: true,
+                    message: '申请失败',
+                    type: 'error'
+                });
+            },
         }
     })
 </script>

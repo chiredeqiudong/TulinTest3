@@ -7,13 +7,15 @@ import java.sql.Date;
  * Attendance:考勤表
  * id:主键
  * employeeId:员工id
+ * name：员工姓名
  * date:当天日期
  * absenceRecord:考勤记录 迟到、早退、缺勤、正常
  */
 public class Attendance {
     private Integer id;
     private Integer employeeId;
-    private Date date;
+    private String name;
+    private String date;
     private String absenceRecord;
 
     public Integer getId() {
@@ -32,11 +34,19 @@ public class Attendance {
         this.employeeId = employeeId;
     }
 
-    public Date getDate() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

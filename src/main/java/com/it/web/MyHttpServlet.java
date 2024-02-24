@@ -35,7 +35,7 @@ public class MyHttpServlet extends HttpServlet {
         } catch (NoSuchMethodException e) {
             System.out.println("方法名错误");
         } catch (InvocationTargetException e) {
-            /*System.out.println("错误2");*/
+            System.out.println("Servlet方法内部错误");
             throw new RuntimeException(e);
         } catch (IllegalAccessException e) {
             // throw new RuntimeException(e);
