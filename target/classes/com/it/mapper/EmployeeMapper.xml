@@ -21,6 +21,12 @@
         <result column="end_date" property="endDate"/>
         <result column="employee_id" property="employeeId"/>
     </resultMap>
+    <resultMap id="employeeQuit" type="quit">
+        <result column="employee_id" property="employeeId"/>
+        <result column="quit_reason" property="quitReason"/>
+        <result column="quit_status" property="quitStatus"/>
+    </resultMap>
+
 
 
     <select id="loginSelect" resultType="com.it.pojo.Employee">
@@ -177,6 +183,54 @@
         from tb_leave
         where id = #{id};
     </delete>
+    <insert id="addLeave">
+        insert into tb_leave (employee_id, name, leave_type, start_date, end_date, reason, leave_status)
+        values (#{employeeId},#{name},#{leaveType},#{startDate},#{endDate},#{reason},#{leaveStatus});
+    </insert>
+    <select id="showQuit" resultMap="employeeQuit">
+        select id, employee_id, name, department, quit_reason, quit_status
+        from tb_quit
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and quit_status != '同意'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and quit_reason like #{reason}
+            </if>
+        </where>
+        limit #{begin},10;
+    </select>
+    <select id="quitCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_quit
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and quit_status != '同意'
+            </if>
+            <if test="reason != null and reason !='' ">
+                and quit_reason like #{reason}
+            </if>
+        </where>
+        limit #{begin},10;
+    </select>
+    <insert id="addQuit">
+        insert into tb_quit (employee_id, name, department, quit_reason, quit_status)
+        values (#{employeeId},#{name},#{department},#{quitReason},#{quitStatus});
+    </insert>
+    <delete id="deleteQuit">
+        delete
+        from tb_quit where id in
+        <foreach collection="quitId" item="id" open="(" close=")" separator=",">
+                #{id}
+        </foreach>
+    </delete>
+
 
 
 

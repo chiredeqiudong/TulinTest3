@@ -518,12 +518,6 @@
                     <!--对话框dialog-->
                     <el-dialog title="请假申请" :visible.sync="dialogFormVisible">
                         <el-form :model="leaveTable">
-                            <el-form-item label="员工ID" :label-width="formLabelWidth" v-if="false">
-                                <el-input v-model="leaveTable.employeeId = employee.id"></el-input>
-                            </el-form-item>
-                            <el-form-item label="姓名" :label-width="formLabelWidth">
-                                <el-input v-model="leaveTable.name" clearable autocomplete="off"></el-input>
-                            </el-form-item>
                             <el-form-item label="请假类型" :label-width="formLabelWidth">
                                 <el-select v-model="leaveTable.leaveType" placeholder="请选择请假类型">
                                     <el-option label="事假" value="事假"></el-option>
@@ -547,6 +541,101 @@
                             <el-button type="primary" @click="addLeave">确 定</el-button>
                         </div>
                     </el-dialog>
+                </el-row>
+            </el-main>
+            <!--离职申请-->
+            <el-main v-if="pages[6] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-input placeholder="请输入离职原因" v-model="reason2" clearable
+                                      style="width: 250px;"></el-input>
+                            <el-button type="primary" @click="showQuit">查 找</el-button>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--离职申请功能-->
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-col :span="24" style="background: white ;height: 50px">
+                                <el-button type="primary" plain @click="dialogFormVisible1 = true;">离职申请</el-button>
+                                <el-button type="danger" plain @click="deleteQuit">撤销申请</el-button>
+                            </el-col>
+                        </el-row>
+                    </el-col>
+                    <!--对话框dialog-->
+                    <el-dialog title="离职申请" :visible.sync="dialogFormVisible1">
+                        <el-form :model="quit">
+                            <el-form-item label="部门" :label-width="formLabelWidth">
+                                <el-select v-model="quit.department" placeholder="请选择部门">
+                                    <el-option label="后勤部" value="后勤"></el-option>
+                                    <el-option label="财务部" value="财务部"></el-option>
+                                    <el-option label="科技部" value="科技部"></el-option>
+                                    <el-option label="人事部" value="人事部"></el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="离职原因" :label-width="formLabelWidth">
+                                <el-input type="textarea" v-model="quit.quitReason" clearable
+                                          autocomplete="off"></el-input>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogFormVisible1 = false">取 消</el-button>
+                            <el-button type="primary" @click="addQuit">确 定</el-button>
+                        </div>
+                    </el-dialog>
+                </el-row>
+                <hr>
+                <!--离职信息表单-->
+                <el-row>
+                    <el-col :span="24" v-model="pageBean" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="quitValue"
+                                    style="width: 100%"
+                                    @selection-change="handleSelectionChange">
+                                <el-table-column
+                                        type="selection"
+                                        width="55">
+                                </el-table-column>
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="离职原因"
+                                        prop="quitReason"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="审核"
+                                        prop="quitStatus"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange3"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
                 </el-row>
             </el-main>
         </el-container>
@@ -601,6 +690,16 @@
                     startDate: '',
                     endDate: '',
                 },
+                //离职表
+                quit: {
+                    employeeId: '',
+                    name: '',
+                    department: '',
+                    quitReason: '',
+                    quitStatus: '',
+                },
+                //离职信息
+                quitValue: [],
                 //薪资信息
                 salary: [],
                 //考勤信息
@@ -609,7 +708,11 @@
                 attendanceValues: [], //初始全部查询
                 //请假数据、原因
                 leave: [],
-                reason: '',
+                reason: '', // 请假原因
+                reason2: '',//离职原因
+                //多选框主键
+                checkBox: [],
+                multipleSelection: [],
                 //默认选项
                 activeIndex: '0',
                 //表单数据验证
@@ -647,8 +750,8 @@
                     value: '缺勤',
                     label: '缺勤'
                 }],
-                //请假dialog
-                dialogFormVisible: false,
+                dialogFormVisible: false,  //请假dialog
+                dialogFormVisible1: false, //离职dialog
                 formLabelWidth: '120px',
                 //不同页面展示
                 pages: [false, false, false, false, false, false, false, false, false],
@@ -697,18 +800,19 @@
                     case '2-1':
                         this.showUnLeave();
                         break;
+                    case '2-2':
+                        this.showQuit();
+                        break;
                     default:
                         window.alert("keyPath:" + keyPath);
                 }
-            }
-            ,
+            },
             //页面展示函数
             showPages(index) {
                 for (let i = 0; i < this.pages.length; i++) {
                     this.pages[i] = i === index;
                 }
-            }
-            ,
+            },
             //根据员工id查找
             idSelect(id) {
                 axios({
@@ -717,8 +821,7 @@
                 }).then((resp) => {
                     this.employee = resp.data;
                 })
-            }
-            ,
+            },
             //系统首页函数
             selectSystemHome() {
                 axios({
@@ -731,8 +834,7 @@
                     this.employee = resp.data;
                     this.info = resp.data;
                 })
-            }
-            ,
+            },
             //展示个人信息
             showInfo() {
                 axios({
@@ -744,8 +846,7 @@
                     //响应数据
                     this.employee = resp.data;
                 })
-            }
-            ,
+            },
             //展示薪资信息
             showSalary() {
                 axios({
@@ -806,6 +907,20 @@
                     this.tollCount = resp.data.tollCount;
                 })
             },
+            //离职申请数据
+            showQuit() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showQuit?employeeId=" + this.employee.id + "&quitReason=" + this.reason2,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //刷新employee数据离职申请数据、页面显示
+                    this.idSelect(this.employee.id);
+                    this.showPages(6);
+                    this.quitValue = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
             //修改个人信息
             polishInfo() {
                 axios({
@@ -847,23 +962,77 @@
                     });
                 });
             },
-            //请假申请表
+            //添加请假申请
             addLeave() {
+                //设置员工ID、姓名
+                this.leaveTable.employeeId = this.employee.id;
+                this.leaveTable.name = this.employee.name;
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/resource_app/employee/addLeave",
-                    data:this.leaveTable
-                }).then((resp) =>{
-                    if (resp.data === "success"){
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/addLeave",
+                    data: this.leaveTable
+                }).then((resp) => {
+                    if (resp.data === "success") {
                         //关闭对话框、刷新数据、成功提示
                         this.dialogFormVisible = false;
                         this.showUnLeave();
                         this.message3();
-                    }
-                    else {
+                    } else {
                         this.message4();
                     }
                 })
+            },
+            //添加离职申请
+            addQuit() {
+                //设置员工ID、姓名
+                this.quit.employeeId = this.employee.id;
+                this.quit.name = this.employee.name;
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/addQuit",
+                    data: this.quit
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        //关闭对话框、刷新数据、成功提示
+                        this.dialogFormVisible1 = false;
+                        this.showQuit();
+                        this.message3();
+                    } else {
+                        this.message4();
+                    }
+                })
+            },
+            //撤销离职申请
+            deleteQuit() {
+                this.$confirm('此操作将撤销离职申请, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //获取所选框id主键
+                    for (let i = 0; i < this.multipleSelection.length; i++) {
+                        let quitTable = this.multipleSelection[i];
+                        this.checkBox[i] = quitTable.id;
+                    }
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/resource_app/employee/deleteQuit",
+                        data: this.checkBox
+                    }).then((resp) => {
+                        //刷新,提示
+                        if (resp.data === "success") {
+                            this.showQuit();
+                            this.message1();
+                        } else {
+                            this.message2();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '取消撤销'
+                    });
+                });
             },
             //头像上传
             handleAvatarSuccess(res, file) {
@@ -890,6 +1059,15 @@
                 this.pageBean.currentPage = val;//重新设置当前页码
                 //查找,重置页数
                 this.showAttendance();
+            },
+            handleCurrentChange3(val) {
+                this.pageBean.currentPage = val;//重新设置当前页码
+                //查找,重置页数
+                this.showQuit();
+            },
+            //多选框数据
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
             },
             //消息提示
             message1() {

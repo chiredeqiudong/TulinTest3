@@ -1,4 +1,5 @@
 com\it\pojo\Leave.class
+com\it\pojo\Quit.class
 com\it\pojo\Page.class
 com\it\pojo\Announcement.class
 com\it\pojo\PageBean.class

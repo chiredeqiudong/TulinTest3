@@ -13,8 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
@@ -44,7 +42,6 @@ public class EmployeeServlet extends MyHttpServlet {
         String checked = req.getParameter("checked");
         String username = tempEmployee.getUsername();
         String password = tempEmployee.getPassword();
-        String role = tempEmployee.getRole();
         // 数据库查询
         Employee employee = employeeService.loginSelect(username, password);
         if (Objects.isNull(employee)) {
@@ -252,7 +249,6 @@ public class EmployeeServlet extends MyHttpServlet {
         //json
         String jsonLeave = req.getReader().readLine();
         Leave leave = JSON.parseObject(jsonLeave, Leave.class);
-        System.out.println( "ygid:" + leave.getEmployeeId());
         if (leave.getEmployeeId() != 0 && leave.getEmployeeId() != null){
             //设置审核状态为未处理
             leave.setLeaveStatus("未处理");
@@ -265,12 +261,73 @@ public class EmployeeServlet extends MyHttpServlet {
             //数据不完善
             resp.getWriter().write("error");
         }
-
-
     }
 
+    /**
+     * 展示离职信息
+     * */
+    public void showQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showQuit方法");
+        //员工id、查询原因,当前页
+        String employeeId = req.getParameter("employeeId");
+        int parseInt = Integer.parseInt(employeeId);
+        String quitReason = req.getParameter("quitReason");
+        //编码、解码
+        byte[] reasonBytes = quitReason.getBytes(StandardCharsets.ISO_8859_1);
+        String reason = new String(reasonBytes,StandardCharsets.UTF_8);
+        String jsonQuit = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonQuit, Page.class);
+        int currentPage = page.getCurrentPage();
+        //service
+        PageBean<Quit> quitPageBean = employeeService.showQuit(parseInt, currentPage, reason);
+        //json响应
+        String jsonString = JSON.toJSONString(quitPageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
 
+    /**
+     * 添加离职申请
+     */
+    public void addQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用addQuit方法");
+        //json
+        String jsonQuit = req.getReader().readLine();
+        Quit quit = JSON.parseObject(jsonQuit, Quit.class);
+        if (quit.getEmployeeId() != 0 && quit.getEmployeeId() != null){
+            //设置审核状态为未处理
+            quit.setQuitStatus("处理中");
+            //service
+            employeeService.addQuit(quit);
+            //转为Json响应
+            resp.getWriter().write("success");
+        }
+        else {
+            //数据不完善
+            resp.getWriter().write("error");
+        }
+    }
 
+    /**
+     * 撤销离职申请
+     */
+    public void deleteQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用deleteQuit方法");
+        //主键数组
+        String jsonQuit = req.getReader().readLine();
+        int[] quitId = JSON.parseObject(jsonQuit, int[].class);
+        if (quitId.length == 0){
+            resp.getWriter().write("error");
+        }
+        else {
+            //service
+            employeeService.deleteQuit(quitId);
+            resp.getWriter().write("success");
+        }
+    }
 
 
 

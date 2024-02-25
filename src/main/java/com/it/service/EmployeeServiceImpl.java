@@ -198,5 +198,59 @@ public class EmployeeServiceImpl implements EmployeeService {
         sqlSession.close();
     }
 
+    /**
+     * showQuit:离职信息
+     * @param employeeId  : 员工id
+     * @param currentPage : 当前页
+     * @param reason      : 离职理由
+     * @return : 离职数据
+     */
+    @Override
+    public PageBean<Quit> showQuit(int employeeId, int currentPage, String reason) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        //分页索引、模糊原因
+        int begin = (currentPage - 1) * 10;
+        if (reason!=null && !reason.isEmpty()){
+            reason="%" + reason + "%";
+        }else {
+            //reason:""
+            reason = "%";
+        }
+        List<Quit> quitList = mapper.showQuit(employeeId, begin, reason);
+        int quitCount = mapper.quitCount(employeeId, begin, reason);
+        PageBean<Quit> quitPageBean = new PageBean<>();
+        quitPageBean.setRows(quitList);
+        quitPageBean.setTollCount(quitCount);
+        sqlSession.close();
+        return quitPageBean;
+    }
+
+    /**
+     * addQuit : 添加离职申请
+     * @param quit : 离职
+     */
+    @Override
+    public void addQuit(Quit quit) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        mapper.addQuit(quit);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
+     * deleteQuit : 删除数据
+     * @param quitId : 离职主键数组
+     */
+    @Override
+    public void deleteQuit(int[] quitId) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        mapper.deleteQuit(quitId);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
 
 }

@@ -128,6 +128,34 @@ public interface EmployeeMapper {
      * */
     void addLeave(Leave leave);
 
+    /**
+     * showQuit:离职信息
+     * @param employeeId: 员工id
+     * @param begin:      索引
+     * @param reason      : 离职理由
+     * @return : 离职数据
+     */
+    List<Quit> showQuit(@Param("employeeId") int employeeId, @Param("begin") int begin, @Param("reason") String reason);
 
+    /**
+     * quitCount:离职查询
+     * @param employeeId: 员工id
+     * @param begin:      索引
+     * @param reason      : 离职理由
+     * @return : 离职数目
+     */
+    int quitCount(@Param("employeeId") int employeeId, @Param("begin") int begin, @Param("reason") String reason);
+
+    /**
+     * addQuit : 添加离职申请
+     * @param quit : 离职
+     * */
+    void addQuit(Quit quit);
+
+    /**
+     * deleteQuit : 删除数据
+     * @param quitId : 离职主键数组
+     * */
+    void deleteQuit(@Param("quitId") int[] quitId);
 }
 
