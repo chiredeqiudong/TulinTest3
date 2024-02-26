@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -329,6 +330,142 @@ public class EmployeeServlet extends MyHttpServlet {
         }
     }
 
+    /**
+     * 已参加培训信息
+     * */
+    public void showTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showTrain方法");
+        //员工id、培训名称、currentPage
+        String jsonPage = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonPage, Page.class);
+        int currentPage = page.getCurrentPage();
+        String employeeId = req.getParameter("employeeId");
+        int parseInt = Integer.parseInt(employeeId);
+        String tempTrainName = req.getParameter("trainName");
+        if (tempTrainName == null){
+            tempTrainName = "";
+        }
+        //编码、解码
+        byte[] trainNameBytes = tempTrainName.getBytes(StandardCharsets.ISO_8859_1);
+        String trainName = new String(trainNameBytes,StandardCharsets.UTF_8);
+        //service
+        PageBean<Score> scorePageBean = employeeService.showTrain(parseInt, currentPage, trainName);
+        //json响应
+        String jsonString = JSON.toJSONString(scorePageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
 
+    /**
+     * 展示培训信息
+     * */
+    public void showTrains(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showTrains方法");
+        //培训名称、currentPage
+        String jsonPage = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonPage, Page.class);
+        int currentPage = page.getCurrentPage();
+        String tempTrainName = req.getParameter("trainNames");
+        if (tempTrainName == null){
+            tempTrainName = "";
+        }
+        //编码、解码
+        byte[] trainNameBytes = tempTrainName.getBytes(StandardCharsets.ISO_8859_1);
+        String trainName = new String(trainNameBytes,StandardCharsets.UTF_8);
+        //service
+        PageBean<Train> trainPageBean = employeeService.showTrains(currentPage, trainName);
+        //json响应
+        String jsonString = JSON.toJSONString(trainPageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
 
+    /**
+     * 添加培训
+     * */
+    public void addTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用addTrain方法");
+        //获取Json数据
+        String jsonTrain = req.getReader().readLine();
+        Score score = JSON.parseObject(jsonTrain, Score.class);
+        //service
+        employeeService.addTrain(score);
+        //json响应
+        resp.getWriter().write("success");
+    }
+
+    /**
+     * 判断是否参加过培训
+     */
+    public void judgeTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用judgeTrain方法");
+        //获取Json数据
+        String tempEmployeeId = req.getParameter("employeeId");
+        String tempTrainId = req.getParameter("trainId");
+        int trainId = Integer.parseInt(tempTrainId);
+        int employeeId = Integer.parseInt(tempEmployeeId);
+        //service
+        Score score = employeeService.judgeTrain(employeeId, trainId);
+        if (Objects.isNull(score)){
+            resp.getWriter().write("success");
+        }
+    }
+
+    /**
+     * 修改密码
+     * */
+    public void polishPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用polishPassword方法");
+        //获取Json数据
+        String tempEmployeeId = req.getParameter("employeeId");
+        int employeeId = Integer.parseInt(tempEmployeeId);
+        String tempNewPassword = req.getParameter("newPassword");
+        int newPassword = Integer.parseInt(tempNewPassword);
+        //service
+        employeeService.updatePassword(employeeId,newPassword);
+        resp.getWriter().write("success");
+    }
+
+    /**
+     * 退出登录
+     * */
+    public void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用logout方法");
+        // 清除认证信息,使当前会话无效
+        req.getSession().invalidate();
+        // 删除Cookie中的认证信息
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authentication".equals(cookie.getName())) {
+                    // 设置Cookie的最大生存时间为0，使其立即过期
+                    cookie.setMaxAge(0);
+                    // 将修改后的Cookie添加到响应中
+                    resp.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+        resp.getWriter().write("success");
+    }
+
+    /**
+     * 公告信息
+     * */
+    public void showAnnouncement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showAnnouncement方法");
+        //service
+        List<Announcement> announcements = employeeService.showAnnouncement(0, 10);
+        String jsonString = JSON.toJSONString(announcements);
+        //响应数据
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
 }

@@ -26,6 +26,23 @@
         <result column="quit_reason" property="quitReason"/>
         <result column="quit_status" property="quitStatus"/>
     </resultMap>
+    <resultMap id="employeeScore" type="score">
+        <result column="employee_id" property="employeeId"/>
+        <result column="train_Name" property="trainName"/>
+        <result column="train_location" property="trainLocation"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="train_Time" property="trainTime"/>
+    </resultMap>
+    <resultMap id="employeeTrain" type="train">
+        <result column="train_Name" property="trainName"/>
+        <result column="train_location" property="trainLocation"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+    </resultMap>
+    <resultMap id="announcement" type="announcement">
+        <result column="create_time" property="createTime"/>
+    </resultMap>
 
 
 
@@ -52,6 +69,11 @@
             phone  = #{phone},
             email  = #{email}
         where id = #{id};
+    </update>
+    <update id="updatePassword">
+        update tb_employee
+        set password = #{newPassword}
+        where id = #{employeeId};
     </update>
     <select id="showSalary" resultMap="employeeSalary">
         select name, department, send_date, money, base_salary, attendance_bonus, performance_pay
@@ -223,6 +245,7 @@
         insert into tb_quit (employee_id, name, department, quit_reason, quit_status)
         values (#{employeeId},#{name},#{department},#{quitReason},#{quitStatus});
     </insert>
+
     <delete id="deleteQuit">
         delete
         from tb_quit where id in
@@ -231,7 +254,68 @@
         </foreach>
     </delete>
 
+    <select id="showTrain" resultMap="employeeScore">
+        select employee_id, name,train_name, train_location, start_date,end_date,datediff(end_date,start_date) as train_time,score
+        from tb_score as t1 join tb_train as t2
+        on  t1.train_id = t2.id
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and score != 0
+            </if>
+            <if test="trainName != null and trainName !='' ">
+                and train_name like #{trainName}
+            </if>
+        </where>
+        order by score
+        limit #{begin},10;
+    </select>
+    <select id="trainCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_score as t1 join tb_train as t2
+        on  t1.train_id = t2.id
+        <where>
+            <if test="employeeId != null">
+                and employee_id = #{employeeId}
+            </if>
+            <if test="employeeId != null">
+                and score != 0
+            </if>
+            <if test="trainName != null and trainName !='' ">
+                and train_name like #{trainName}
+            </if>
+        </where>
+    </select>
+    <select id="showTrains" resultMap="employeeTrain">
+        select id, train_name, train_location, description, start_date, end_date
+        from tb_train
+        where train_name like #{trainNames}
+        limit #{begin},10;
+    </select>
+    <select id="trainsCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_train
+        where train_name like #{trainNames}
+        limit #{begin},10;
+    </select>
 
 
+    <insert id="addTrain">
+        insert into tb_score (employee_id, name, train_id, score)
+        values (#{employeeId},#{name},#{trainId},#{score});
+    </insert>
 
+    <select id="judgeTrain" resultMap="employeeScore">
+        select id, employee_id, name, train_id, score
+        from tb_score
+        where employee_id = #{employeeId} and train_id = #{trainId};
+    </select>
+    <select id="showAnnouncement" resultMap="announcement">
+        select title, content, writer, create_time
+        from tb_announcement
+        order by create_time desc
+        limit #{begin},#{size};
+    </select>
 </mapper>

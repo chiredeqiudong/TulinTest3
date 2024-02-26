@@ -45,7 +45,21 @@ public class EmployeeServiceImpl implements EmployeeService {
         sqlSession.commit();
         sqlSession.close();
     }
-    
+
+    /**
+     * updatePassword:修改个人密码
+     * @param employeeId  : 员工id
+     * @param newPassword : 新密码
+     */
+    @Override
+    public void updatePassword(int employeeId, int newPassword) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        mapper.updatePassword(employeeId,newPassword);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
     /**
      * idSelect:员工数据查询
      * @param employeeId : 员工id
@@ -250,6 +264,104 @@ public class EmployeeServiceImpl implements EmployeeService {
         mapper.deleteQuit(quitId);
         sqlSession.commit();
         sqlSession.close();
+    }
+
+    /**
+     * showTrain:培训信息
+     * @param employeeId  : 员工id
+     * @param currentPage : 当前页
+     * @param trainName   : 培训名称
+     * @return : 培训数据
+     */
+    @Override
+    public PageBean<Score> showTrain(int employeeId, int currentPage, String trainName) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        //分页索引、模糊原因
+        int begin = (currentPage - 1) * 10;
+        if (trainName!=null && !trainName.isEmpty()){
+            trainName ="%" + trainName + "%";
+        }else {
+            //trainName:""
+            trainName = "%";
+        }
+        List<Score> scoreList = mapper.showTrain(employeeId, begin, trainName);
+        int trainCount = mapper.trainCount(employeeId, begin, trainName);
+        PageBean<Score> trainPageBean = new PageBean<>();
+        trainPageBean.setRows(scoreList);
+        trainPageBean.setTollCount(trainCount);
+        sqlSession.close();
+        return trainPageBean;
+    }
+
+    /**
+     * showTrains:培训信息
+     * @param currentPage :  当前页
+     * @param trainNames  : 培训名称
+     * @return : 培训数据
+     */
+    @Override
+    public PageBean<Train> showTrains(int currentPage, String trainNames) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        //分页索引、模糊原因
+        int begin = (currentPage - 1) * 10;
+        if (trainNames !=null && !trainNames.isEmpty()){
+            trainNames ="%" + trainNames + "%";
+        }else {
+            //trainName:""
+            trainNames = "%";
+        }
+        List<Train> trainList = mapper.showTrains(begin,trainNames);
+        int trainCount = mapper.trainsCount(begin, trainNames);
+        PageBean<Train> trainPageBean = new PageBean<>();
+        trainPageBean.setRows(trainList);
+        trainPageBean.setTollCount(trainCount);
+        sqlSession.close();
+        return trainPageBean;
+    }
+
+    /**
+     * addTrain:添加培训成绩
+     * @param score : 培训成绩表
+     */
+    @Override
+    public void addTrain(Score score) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        mapper.addTrain(score);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
+     * judgeTrain:判断是否有重复参加
+     * @param employeeId : 员工id
+     * @param trainId    : 培训ID
+     * @return Score对象
+     */
+    @Override
+    public Score judgeTrain(int employeeId, int trainId) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        Score score = mapper.judgeTrain(employeeId, trainId);
+        sqlSession.close();
+        return score;
+    }
+
+    /**
+     * showAnnouncement:查询公告信息
+     * @param begin : 开始索引
+     * @param size  : 数目
+     * @return Announcement集合
+     */
+    @Override
+    public List<Announcement> showAnnouncement(int begin, int size) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        List<Announcement> announcements = mapper.showAnnouncement(begin, size);
+        sqlSession.close();
+        return announcements;
     }
 
 

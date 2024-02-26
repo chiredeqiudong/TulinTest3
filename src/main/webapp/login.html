@@ -13,7 +13,7 @@
         <!--登录信息表单-->
         <el-form ref="form" :model="user" label-width="80px">
             <el-form-item label="用户名:">
-                <el-input v-model="user.username" placeholder="请输入用户名"></el-input>
+                <el-input v-model="user.username" clearable placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item label="密码:">
                 <el-input v-model="user.password" show-password placeholder="请输入密码"></el-input>
@@ -93,7 +93,7 @@
                         }
                         //管理员
                         else {
-                            window.location.href = "http://localhost:8080/resource_app/home.html";
+                            window.location.href = "http://localhost:8080/resource_app/adminHome.html";
                         }
                     }
                 })
@@ -102,7 +102,6 @@
             showError() {
                 this.$message.error('用户不存在');
             },
-
         }
     })
 </script>

@@ -7,12 +7,14 @@ import java.sql.Date;
  * id:主键
  * title:标题
  * content:内容
+ * writer:创作者
  * createTime:创建时间
  */
 public class Announcement {
     private Integer id;
     private String title;
     private String content;
+    private String writer;
     private Date createTime;
 
     public Integer getId() {
@@ -45,5 +47,13 @@ public class Announcement {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public String getWriter() {
+        return writer;
+    }
+
+    public void setWriter(String writer) {
+        this.writer = writer;
     }
 }

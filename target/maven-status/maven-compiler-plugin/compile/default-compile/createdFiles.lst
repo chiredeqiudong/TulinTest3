@@ -4,6 +4,7 @@ com\it\pojo\Page.class
 com\it\pojo\Announcement.class
 com\it\pojo\PageBean.class
 com\it\pojo\Attendance.class
+com\it\web\LoginFilter.class
 com\it\pojo\Salary.class
 com\it\service\EmployeeService.class
 com\it\pojo\Employee.class

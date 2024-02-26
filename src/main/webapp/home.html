@@ -55,32 +55,21 @@
         <!--顶栏-->
         <el-header>
             <el-row>
-                <el-col :span="8">
+                <el-col :span="12">
                     <i class="el-icon-s-promotion">人力资源管理系统</i>
                 </el-col>
-                <el-col :span="8">
-                    <div class="grid-content bg-purple">
-                        <el-breadcrumb separator-class="el-icon-arrow-right" style="font-size: 18px;">
-                            <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-                            <el-breadcrumb-item>系统首页</el-breadcrumb-item>
-                            <el-breadcrumb-item>活动列表</el-breadcrumb-item>
-                            <el-breadcrumb-item>活动详情</el-breadcrumb-item>
-                        </el-breadcrumb>
-                    </div>
-                </el-col>
-                <el-col :span="8" style="text-align: right">
-                    <el-dropdown>
+                <el-col :span="12" style="text-align: right">
+                    <el-dropdown @command="handleCommand">
                         <span class="el-dropdown-link">
-                             <el-avatar v-model="employee" :src="employee.avatar" :size="50">
-                             </el-avatar>
+                             <el-avatar v-model="employee" :src="employee.avatar" :size="50"></el-avatar>
                         </span>
                         <span style="font-size: 20px;">
                             {{employee.username}}
                         </span>
                         <el-dropdown-menu slot="dropdown">
-                            <el-dropdown-item>个人信息</el-dropdown-item>
-                            <el-dropdown-item>修改密码</el-dropdown-item>
-                            <el-dropdown-item>退出登录</el-dropdown-item>
+                            <el-dropdown-item command="a">个人信息</el-dropdown-item>
+                            <el-dropdown-item command="b">修改密码</el-dropdown-item>
+                            <el-dropdown-item command="c">退出登录</el-dropdown-item>
                         </el-dropdown-menu>
                     </el-dropdown>
                 </el-col>
@@ -112,7 +101,7 @@
                             <el-submenu index="2-3">
                                 <template slot="title">培训计划</template>
                                 <el-menu-item index="2-3-1">培训信息</el-menu-item>
-                                <el-menu-item index="2-3-2">成绩查询</el-menu-item>
+                                <el-menu-item index="2-3-2">培训申请</el-menu-item>
                             </el-submenu>
                         </el-menu-item-group>
                     </el-submenu>
@@ -125,15 +114,16 @@
                         您好，{{employee.name}}！欢迎使用本系统
                     </el-col>
                 </el-row>
-                <br>
+                <hr>
                 <el-row>
-                    <el-col :span="24" v-model="employee" style="background: white ;height: 350px;">
-                        <h1 style="text-align: center">公告信息</h1>
+                    <el-col :span="24" v-model="announcements" style="background: white ;height: 380px;">
+                        <h1>公告信息</h1>
                         <el-carousel>
-                            <el-carousel-item v-for="item in 5" :key="item">
-                                <p>
-                                    2023年12月31日,放假!2023年12月31日,放假！2023年12月31日,放假！2023年12月31日,放假！
-                                </p>
+                            <el-carousel-item  v-for="(announcement, index) in announcements" :key="index">
+                                <h2 style="text-align: center">{{ announcement.title }}</h2>
+                                <p>{{ announcement.content }}</p>
+                                <p>来源：{{ announcement.writer }}</p>
+                                <p>时间：{{ announcement.createTime }}</p>
                             </el-carousel-item>
                         </el-carousel>
                     </el-col>
@@ -638,6 +628,166 @@
                     </el-col>
                 </el-row>
             </el-main>
+            <!--培训信息-->
+            <el-main v-if="pages[7] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-input placeholder="请输入培训名称" v-model="trainName" clearable
+                                      style="width: 250px;"></el-input>
+                            <el-button type="primary" @click="showTrain">查 找</el-button>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--培训表单-->
+                <el-row>
+                    <el-col :span="24" v-model="pageBean" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="trainValue"
+                                    style="width: 100%">
+                                <el-table-column
+                                        label="姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训名称"
+                                        prop="trainName"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训地点"
+                                        prop="trainLocation"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="开始日期"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="结束日期"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训时长(天)"
+                                        prop="trainTime"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训成绩"
+                                        prop="score"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange4"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--参加培训-->
+            <el-main v-if="pages[8] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-row>
+                            <el-input placeholder="请输入培训名称" v-model="trainNames" clearable
+                                      style="width: 250px;"></el-input>
+                            <el-button type="primary" @click="showTrains">查 找</el-button>
+                        </el-row>
+                    </el-col>
+                </el-row>
+                <hr>
+                <!--培训表单-->
+                <el-row>
+                    <el-col :span="24" v-model="pageBean" style="background: white ;height: 600px;">
+                        <template>
+                            <el-table
+                                    :data="trains"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训名称"
+                                        prop="trainName"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训地点"
+                                        prop="trainLocation"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训描述"
+                                        prop="description"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="开始日期"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="结束日期"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        align="center">
+                                    <!--修改(当前数据id)、单个删除-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain @click="judgeTrain(scope.row)">参加
+                                        </el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="pageBean.currentPage"
+                                @current-change="handleCurrentChange5"
+                                :total="tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--修改密码-->
+            <el-main v-if="pages[9] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 250px; width: 500px">
+                        <el-row>
+                            <el-form :model="ruleForm" status-icon :rules="passwordRules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
+                                <el-form-item label="密码" prop="pass">
+                                    <el-input type="password" v-model="ruleForm.pass" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="确认密码" prop="checkPass">
+                                    <el-input type="password" v-model="ruleForm.checkPass" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="submitForm('ruleForm')">提交</el-button>
+                                    <el-button @click="resetForm('ruleForm')">重置</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-row>
+                    </el-col>
+                </el-row>
+            </el-main>
         </el-container>
     </el-container>
 </div>
@@ -654,6 +804,26 @@
     new Vue({
         el: '#home',
         data() {
+            //密码校验
+            const validatePass = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请输入密码'));
+                } else {
+                    if (this.ruleForm.checkPass !== '') {
+                        this.$refs.ruleForm.validateField('checkPass');
+                    }
+                    callback();
+                }
+            };
+            const validatePass2 = (rule, value, callback) => {
+                if (value === '') {
+                    callback(new Error('请再次输入密码'));
+                } else if (value !== this.ruleForm.pass) {
+                    callback(new Error('两次输入密码不一致!'));
+                } else {
+                    callback();
+                }
+            };
             return {
                 //员工数据
                 employee: {
@@ -698,6 +868,13 @@
                     quitReason: '',
                     quitStatus: '',
                 },
+                //培训表
+                train: {
+                    employeeId: '',
+                    name: '',
+                    trainId: '',
+                    score: '',
+                },
                 //离职信息
                 quitValue: [],
                 //薪资信息
@@ -710,9 +887,17 @@
                 leave: [],
                 reason: '', // 请假原因
                 reason2: '',//离职原因
+                //培训数据
+                trainValue: [],
+                trainName: '',
+                //参加培训
+                trains: [],
+                trainNames: '',
                 //多选框主键
                 checkBox: [],
                 multipleSelection: [],
+                //公告数据
+                announcements:[],
                 //默认选项
                 activeIndex: '0',
                 //表单数据验证
@@ -739,6 +924,8 @@
                 },
                 //总条目数
                 tollCount: '',
+                //判断flag
+                flag: '',
                 //考勤选择器
                 attendanceOptions: [{
                     value: '迟到',
@@ -750,19 +937,32 @@
                     value: '缺勤',
                     label: '缺勤'
                 }],
+                //密码修改
+                ruleForm: {
+                    pass: '',
+                    checkPass: '',
+                },
+                passwordRules: {
+                    pass: [
+                        { validator: validatePass, trigger: 'blur' }
+                    ],
+                    checkPass: [
+                        { validator: validatePass2, trigger: 'blur' }
+                    ],
+                },
                 dialogFormVisible: false,  //请假dialog
                 dialogFormVisible1: false, //离职dialog
                 formLabelWidth: '120px',
                 //不同页面展示
-                pages: [false, false, false, false, false, false, false, false, false],
+                pages: [false, false, false, false, false, false, false, false, false,false],
             }
         },
         //(生命周期函数)页面加载完成,发送异步请求,获取初始数据
         mounted() {
             this.showMessage(); // 登录成功提示
             this.selectSystemHome(); //刷新页面执行
-        }
-        ,
+            this.showAnnouncement(); //公告内容
+        },
         methods: {
             //登录成功信息展示
             showMessage() {
@@ -778,12 +978,22 @@
                     localStorage.removeItem('loginSuccess');
                 }
             },
+            //展示公告信息
+            showAnnouncement(){
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/employee/showAnnouncement",
+                }).then((resp) => {
+                    this.announcements = resp.data;
+                })
+            },
             //菜单选项功能分发
             menuSelect(key, keyPath) {
                 //key:选项索引，keyPath:索引路径数组
                 switch (key) {
                     case '0':
                         this.selectSystemHome();
+                        this.showAnnouncement();
                         break;
                     case '1-1':
                         this.showInfo();
@@ -803,6 +1013,12 @@
                     case '2-2':
                         this.showQuit();
                         break;
+                    case '2-3-1':
+                        this.showTrain();
+                        break;
+                    case '2-3-2':
+                        this.showTrains();
+                        break;
                     default:
                         window.alert("keyPath:" + keyPath);
                 }
@@ -820,6 +1036,7 @@
                     url: "http://localhost:8080/resource_app/employee/idSelect?employeeId=" + id,
                 }).then((resp) => {
                     this.employee = resp.data;
+                    this.ruleForm.pass = this.employee.password;
                 })
             },
             //系统首页函数
@@ -833,6 +1050,8 @@
                     //响应数据
                     this.employee = resp.data;
                     this.info = resp.data;
+                    //密码绑定
+                    this.ruleForm.pass = this.employee.password;
                 })
             },
             //展示个人信息
@@ -1034,6 +1253,124 @@
                     });
                 });
             },
+            //展示参加的培训信息
+            showTrain() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showTrain?employeeId=" + this.employee.id + "&trainName=" + this.trainName,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //刷新employee数据离职申请数据、页面显示
+                    this.idSelect(this.employee.id);
+                    this.showPages(7);
+                    this.trainValue = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
+            //展示未参加培训信息
+            showTrains() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/showTrains?trainNames=" + this.trainNames,
+                    data: this.pageBean,
+                }).then((resp) => {
+                    //刷新employee数据离职申请数据、页面显示
+                    this.idSelect(this.employee.id);
+                    this.showPages(8);
+                    this.trains = resp.data.rows;
+                    this.tollCount = resp.data.tollCount;
+                })
+            },
+            //参加培训
+            addTrain(row) {
+                //设置员工ID、姓名
+                this.train.employeeId = this.employee.id;
+                this.train.name = this.employee.name;
+                this.train.trainId = row.id;
+                this.train.score = 0;
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/employee/addTrain",
+                    data: this.train
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        this.message3();
+                    } else {
+                        this.message4();
+                    }
+                })
+            },
+            //判断是否可参加培训
+            judgeTrain(row) {
+                //弹框提示，是否删除
+                this.$confirm('是否参加此培训', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    axios({
+                        method: "get",
+                        url: "http://localhost:8080/resource_app/employee/judgeTrain?employeeId=" + this.employee.id + "&trainId=" + row.id,
+                    }).then((resp) => {
+                        //是否参加
+                        if (resp.data === "success") {
+                            //添加培训
+                            this.addTrain(row);
+                        } else {
+                            this.message4();
+                        }
+                    })
+                }).catch(() => {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消申请'
+                    });
+                });
+            },
+            //修改密码
+            polishPassword() {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/employee/polishPassword?employeeId="+this.employee.id+"&newPassword="+this.ruleForm.checkPass,
+                }).then((resp) => {
+                    if (resp.data === "success"){
+                        //修改成功
+                        this.message5()
+                    }
+                    else{
+                        this.message6();
+                    }
+                })
+            },
+            //下拉菜单
+            handleCommand(command) {
+                switch (command){
+                    case 'a':
+                        this.showInfo();
+                        break;
+                    case 'b':
+                        this.idSelect(this.employee.id);
+                        this.showPages(9);
+                        break;
+                    case 'c':
+                        //退出登录
+                        this.logout();
+                        break;
+                    default:
+                        alert("错误!");
+                }
+            },
+            //退出登录
+            logout(){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/employee/logout"
+                }).then((resp) => {
+                    if (resp.data ==="success"){
+                        window.location.href = "http://localhost:8080/resource_app/login.html";
+                    }
+                })
+            },
             //头像上传
             handleAvatarSuccess(res, file) {
                 this.info.avatar = URL.createObjectURL(file.raw);
@@ -1049,21 +1386,44 @@
                 }
                 return isJPG && isLt2M;
             },
+            //密码修改表单确认
+            submitForm(formName) {
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        //成功提交,异步请求
+                        this.polishPassword();
+                    } else {
+                        this.message6();
+                        return false;
+                    }
+                });
+            },
+            //重置密码表单数据
+            resetForm(formName) {
+                this.$refs[formName].resetFields();
+            },
             //当前页查询;
             handleCurrentChange1(val) {
                 this.pageBean.currentPage = val;//重新设置当前页码
-                //查找,重置页数
                 this.showSalary();
             },
             handleCurrentChange2(val) {
                 this.pageBean.currentPage = val;//重新设置当前页码
-                //查找,重置页数
                 this.showAttendance();
             },
             handleCurrentChange3(val) {
                 this.pageBean.currentPage = val;//重新设置当前页码
                 //查找,重置页数
                 this.showQuit();
+            },
+            handleCurrentChange4(val) {
+                this.pageBean.currentPage = val;//重新设置当前页码
+                this.showTrain();
+            },
+            handleCurrentChange5(val) {
+                this.pageBean.currentPage = val;//重新设置当前页码
+                //查找,重置页数
+                this.showTrains();
             },
             //多选框数据
             handleSelectionChange(val) {
@@ -1095,6 +1455,20 @@
                 this.$message({
                     showClose: true,
                     message: '申请失败',
+                    type: 'error'
+                });
+            },
+            message5() {
+                this.$message({
+                    showClose: true,
+                    message: '修改成功',
+                    type: 'success'
+                });
+            },
+            message6() {
+                this.$message({
+                    showClose: true,
+                    message: '修改失败',
                     type: 'error'
                 });
             },
