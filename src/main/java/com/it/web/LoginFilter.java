@@ -1,6 +1,7 @@
 package com.it.web;
 
 
+import com.it.pojo.Admin;
 import com.it.pojo.Employee;
 
 import javax.servlet.*;
@@ -34,7 +35,8 @@ public class LoginFilter implements Filter {
         }
         //查看会话是否存在
         Employee employee = (Employee) req.getSession().getAttribute("employee");
-        if (employee != null) {
+        Admin admin = (Admin) req.getSession().getAttribute("admin");
+        if (employee != null || admin != null) {
             filterChain.doFilter(req, resp);
         } else {
             //重定向

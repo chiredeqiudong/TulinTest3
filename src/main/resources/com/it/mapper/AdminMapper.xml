@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.it.mapper.AdminMapper">
+    <!--resultMap映射-->
+    <resultMap id="employeeSalary" type="salary">
+        <result column="send_date" property="sendDate"/>
+        <result column="base_salary" property="baseSalary"/>
+        <result column="attendance_bonus" property="attendanceBonus"/>
+        <result column="performance_pay" property="performancePay"/>
+    </resultMap>
+    <resultMap id="employeeAttendance" type="attendance">
+        <result column="absence_record" property="absenceRecord"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+    <resultMap id="employeeLeave" type="leave">
+        <result column="leave_type" property="leaveType"/>
+        <result column="leave_status" property="leaveStatus"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="employee_id" property="employeeId"/>
+    </resultMap>
+    <resultMap id="employeeQuit" type="quit">
+        <result column="employee_id" property="employeeId"/>
+        <result column="quit_reason" property="quitReason"/>
+        <result column="quit_status" property="quitStatus"/>
+    </resultMap>
+    <resultMap id="employeeScore" type="score">
+        <result column="employee_id" property="employeeId"/>
+        <result column="train_Name" property="trainName"/>
+        <result column="train_location" property="trainLocation"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+        <result column="train_Time" property="trainTime"/>
+    </resultMap>
+    <resultMap id="employeeTrain" type="train">
+        <result column="train_Name" property="trainName"/>
+        <result column="train_location" property="trainLocation"/>
+        <result column="start_date" property="startDate"/>
+        <result column="end_date" property="endDate"/>
+    </resultMap>
+    <resultMap id="announcement" type="announcement">
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+    
+    <update id="updateAnnounce">
+        update tb_announcement
+        set title       = #{title},
+            content     = #{content},
+            writer      = #{writer},
+            create_time = #{createTime}
+        where id = #{id};
+    </update>
+
+    <select id="loginSelect" resultType="com.it.pojo.Admin">
+        select id,
+               username,
+               password,
+               name,
+               role,
+               phone,
+               avatar,
+               email
+        from tb_admin
+        where username = #{username}
+          and password = #{password};
+    </select>
+    <select id="showAnnounce" resultMap="announcement">
+        select id, title, content, writer, create_time
+        from tb_announcement
+        where title like #{title}
+        order by create_time desc
+        limit #{begin},10;
+    </select>
+    <select id="announceCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_announcement
+        where title like #{title}
+        order by create_time desc
+    </select>
+    <select id="adminSelect" resultType="com.it.pojo.Admin">
+        select id,
+               username,
+               password,
+               name,
+               role,
+               phone,
+               avatar,
+               email
+        from tb_admin
+        where id = #{adminId};
+    </select>
+    <select id="selectAnnounce" resultMap="announcement">
+        select id, title, content, writer, create_time
+        from tb_announcement
+        where id = #{id};
+    </select>
+
+    <insert id="addAnnounce">
+        insert into tb_announcement (title, content, writer, create_time)
+        values (#{title}, #{content}, #{writer}, #{createTime});
+    </insert>
+
+    <delete id="deleteAnnounce">
+        delete
+        from tb_announcement
+        where id = #{id};
+    </delete>
+    <delete id="deleteAnnounces">
+        delete
+        from tb_announcement where id in
+        <foreach collection="announcesId" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="showTrain" resultMap="employeeTrain">
+        select id, train_name, train_location, description, start_date, end_date
+        from tb_train
+        where train_name like #{trainName}
+        order by start_date desc, end_date desc
+        limit #{begin},10;
+    </select>
+    <select id="trainCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_train
+        where train_name like #{trainName}
+        order by start_date desc, end_date desc;
+    </select>
+    <insert id="addTrain">
+        insert into tb_train (train_name, train_location, description, start_date, end_date)
+        values (#{trainName}, #{trainLocation}, #{description}, #{startDate}, #{endDate});
+    </insert>
+
+    <delete id="deleteTrain">
+        delete
+        from tb_train
+        where id = #{id};
+    </delete>
+    <select id="selectTrain" resultMap="employeeTrain">
+        select id, train_name, train_location, description, start_date, end_date
+        from tb_train
+        where id = #{id};
+    </select>
+    <update id="updateTrain">
+        update tb_train
+        set train_name = #{trainName},
+            train_location = #{trainLocation},
+            start_date = #{startDate},
+            end_date = #{endDate},
+            description = #{description}
+        where id = #{id};
+    </update>
+    <delete id="deleteTrains">
+        delete
+        from tb_train
+        where id in
+        <foreach collection="trainsId" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

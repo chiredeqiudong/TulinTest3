@@ -231,7 +231,7 @@ public class EmployeeServlet extends MyHttpServlet {
      */
     public void deleteLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //测试是否调用该方法
-        System.out.println("调用deleteLeave方法");
+        System.out.println("调用`delete`Leave方法");
         //获取员工请假申请id主键
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);

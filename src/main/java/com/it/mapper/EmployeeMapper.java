@@ -35,7 +35,6 @@ public interface EmployeeMapper {
 
     /**
      * salarySelect:薪资信息查询
-     *
      * @param employeeId : 员工id
      * @param begin:开始索引
      * @param page:      当前页码和查询日期;

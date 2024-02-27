@@ -34,7 +34,7 @@
                 </template>
             </el-form-item>
             <el-form-item>
-                <el-button type="primary" @click="Login">登录</el-button>
+                <el-button type="submit" @click="Login">登录</el-button>
                 <el-button plain native-type="reset">重置</el-button>
             </el-form-item>
         </el-form>
@@ -56,7 +56,7 @@
                 user: {
                     username: '',
                     password: '',
-                    role: '',
+                    role: true, // 默认员工
                 },
                 //cookie
                 checked: '',
@@ -68,35 +68,50 @@
                     value: false,
                     label: '管理员'
                 }],
-                //login_msg
-                showErrorMessage: false,
             }
         },
         //方法:
         methods: {
             //登录
             Login() {
-                axios({
-                    method: "post",
-                    url: "http://localhost:8080/resource_app/employee/login?checked=" + this.checked,
-                    data: this.user
-                }).then((resp) => {
-                    if (resp.data === "error") {
-                        //登录失败
-                        this.showError();
-                    } else {
-                        // 将登录成功的信息存储到本地存储中
-                        localStorage.setItem('loginSuccess', 'true');
-                        //员工
-                        if (this.user.role === true) {
+                //和员工
+                if (this.user.role === true) {
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/resource_app/employee/login?checked=" + this.checked,
+                        data: this.user
+                    }).then((resp) => {
+                        if (resp.data === "error") {
+                            //登录失败
+                            this.showError();
+                        } else {
+                            // 将登录成功的信息存储到本地存储中
+                            localStorage.setItem('loginSuccess', 'true');
+                            //员工
                             window.location.href = "http://localhost:8080/resource_app/home.html";
                         }
-                        //管理员
-                        else {
+                    })
+                }
+                else if (this.user.role === false){
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/resource_app/admin/login",
+                        data: this.user
+                    }).then((resp) => {
+                        if (resp.data === "error") {
+                            //登录失败
+                            this.showError();
+                        }else {
+                            // 将登录成功的信息存储到本地存储中
+                            // localStorage.setItem('loginSuccess', 'true');
+                            //管理员
                             window.location.href = "http://localhost:8080/resource_app/adminHome.html";
                         }
-                    }
-                })
+                    })
+                }
+                else {
+                    this.showError();
+                }
             },
             //错误信息提示
             showError() {
