@@ -17,6 +17,24 @@ public class Quit {
     private String department;
     private String quitReason;
     private String quitStatus;
+    private String role;
+    private String deleteStatus;
+
+  public String getRole() {
+    return role;
+  }
+
+  public void setRole(String role) {
+    this.role = role;
+  }
+
+  public String getDeleteStatus() {
+    return deleteStatus;
+  }
+
+  public void setDeleteStatus(String deleteStatus) {
+    this.deleteStatus = deleteStatus;
+  }
 
   public Integer getId() {
     return id;

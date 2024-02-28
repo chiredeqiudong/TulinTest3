@@ -558,14 +558,6 @@
                     <!--对话框dialog-->
                     <el-dialog title="离职申请" :visible.sync="dialogFormVisible1">
                         <el-form :model="quit">
-                            <el-form-item label="部门" :label-width="formLabelWidth">
-                                <el-select v-model="quit.department" placeholder="请选择部门">
-                                    <el-option label="后勤部" value="后勤"></el-option>
-                                    <el-option label="财务部" value="财务部"></el-option>
-                                    <el-option label="科技部" value="科技部"></el-option>
-                                    <el-option label="人事部" value="人事部"></el-option>
-                                </el-select>
-                            </el-form-item>
                             <el-form-item label="离职原因" :label-width="formLabelWidth">
                                 <el-input type="textarea" v-model="quit.quitReason" clearable
                                           autocomplete="off"></el-input>
@@ -1205,7 +1197,6 @@
             addQuit() {
                 //设置员工ID、姓名
                 this.quit.employeeId = this.employee.id;
-                this.quit.name = this.employee.name;
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/employee/addQuit",
@@ -1287,7 +1278,7 @@
                 this.train.employeeId = this.employee.id;
                 this.train.name = this.employee.name;
                 this.train.trainId = row.id;
-                this.train.score = 0;
+                this.train.score = -1;
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/employee/addTrain",
@@ -1454,7 +1445,7 @@
             message4() {
                 this.$message({
                     showClose: true,
-                    message: '申请失败',
+                    message: '不能重复参加',
                     type: 'error'
                 });
             },

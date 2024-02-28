@@ -23,6 +23,33 @@ public class Leave {
     private Date endDate;
     private String reason;
     private String leaveStatus;
+    private int leaveTime;
+    private String  department;
+    private String role;
+
+    public int getLeaveTime() {
+        return leaveTime;
+    }
+
+    public void setLeaveTime(int leaveTime) {
+        this.leaveTime = leaveTime;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
 
     public Integer getId() {
         return id;

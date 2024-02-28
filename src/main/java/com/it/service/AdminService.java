@@ -100,4 +100,86 @@ public interface AdminService {
      */
     void deleteTrains(int[] trainsId);
 
+    /**
+     * showEmployees:查询员工数据
+     * @param  page:员工数据
+     * @return : 员工数据
+     */
+    PageBean<Employee> showEmployees(Page page);
+    /**
+     * showEmployees2:查询员工数据
+     * @param  page:员工数据
+     * @return : 员工数据
+     */
+    PageBean<Employee> showEmployees2(Page page);
+
+    /**
+     * selectEmployeeByData:查询员工数据
+     * @param employee : 员工对象
+     * @return : 员工个数
+     */
+    int selectEmployeeByData(Employee employee);
+
+    /**
+     * addEmployee:添加培员工数据
+     * @param employee : 培训
+     */
+    void addEmployee(Employee employee);
+    /**
+     * selectEmployee:数据回显
+     * @param id : 主键
+     * @return 员工数据
+     */
+    Employee selectEmployee(int id);
+
+    /**
+     * updateEmployee:修改数据
+     * @param employee : 员工数据
+     */
+    void updateEmployee(Employee employee);
+
+    /**
+     * deleteEmployees:批量删除
+     * @param employeesId : id数据
+     */
+    void deleteEmployees(int[] employeesId);
+
+
+    /**
+     * leavesCount : 请假未处理的数据个数
+     * @param page : 查询对象
+     * @return 请假未处理的数据个数
+     * */
+    PageBean<Leave> showLeaves(Page page);
+
+    /**
+     * judgeLeave : 请假处理
+     * @param id : id
+     * @param leaveStatus : 审核结果
+     * */
+    void judgeLeave(int id,String leaveStatus);
+
+    /**
+     * showQuits : 离职未处理的数据
+     * @param page : 查询对象
+     * @return 离职未处理的数据个数
+     * */
+    PageBean<Quit> showQuits(Page page);
+
+    /**
+     * judgeQuit : 离职处理
+     * @param id : id
+     * @param quitStatus : 审核结果
+     * @param deleteStatus : 软删除结果
+     * */
+    void judgeQuit(int id,String quitStatus,String deleteStatus);
+
+    /**
+     * showScores : 培训成绩未处理的数据
+     * @param page : 查询对象
+     * @return 培训未打分的数据
+     * */
+    PageBean<Score> showScores(Page page);
+
+
 }

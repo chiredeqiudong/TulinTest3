@@ -89,7 +89,6 @@
                         <template slot="title"><i class="el-icon-s-custom">用户管理</i></template>
                         <el-menu-item-group>
                             <el-menu-item index="1-1">员工信息</el-menu-item>
-                            <el-menu-item index="1-2">管理员信息</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="2">
@@ -98,6 +97,7 @@
                             <el-menu-item index="2-1">请假审批</el-menu-item>
                             <el-menu-item index="2-2">离职审批</el-menu-item>
                             <el-menu-item index="2-3">考勤处理</el-menu-item>
+                            <el-menu-item index="2-4">培训成绩</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="3">
@@ -129,7 +129,8 @@
             <el-main v-if="adminPages[1] === true">
                 <el-row>
                     <el-col :span="24" style="background: white ;height: 50px;">
-                        <el-input v-model="announcePage.announceTitle" clearable placeholder="请输入标题查询" style="width: 250px"></el-input>
+                        <el-input v-model="announcePage.announceTitle" clearable placeholder="请输入标题查询"
+                                  style="width: 250px"></el-input>
                         <el-button type="primary" plain @click="showAnnounce">查找</el-button>
                     </el-col>
                 </el-row>
@@ -234,8 +235,10 @@
                                         align="center">
                                     <!--修改(当前数据id)、单个删除-->
                                     <el-row slot-scope="scope">
-                                        <el-button type="primary" plain @click="selectAnnounce(scope.row)">编辑</el-button>
-                                        <el-button type="danger" plain @click="deleteAnnounce(scope.row)">删除</el-button>
+                                        <el-button type="primary" plain @click="selectAnnounce(scope.row)">编辑
+                                        </el-button>
+                                        <el-button type="danger" plain @click="deleteAnnounce(scope.row)">删除
+                                        </el-button>
                                     </el-row>
                                 </el-table-column>
                             </el-table>
@@ -256,7 +259,8 @@
             <el-main v-if="adminPages[2] === true">
                 <el-row>
                     <el-col :span="24" style="background: white ;height: 50px;">
-                        <el-input v-model="trainPage.trainName" clearable placeholder="请输入培训名称" style="width: 250px"></el-input>
+                        <el-input v-model="trainPage.trainName" clearable placeholder="请输入培训名称"
+                                  style="width: 250px"></el-input>
                         <el-button type="primary" plain @click="showTrain">查找</el-button>
                     </el-col>
                 </el-row>
@@ -270,10 +274,12 @@
                     <el-dialog title="培训信息" :visible.sync="trainVisible">
                         <el-form :model="trainTable">
                             <el-form-item label="培训名称" :label-width="formLabelWidth">
-                                <el-input v-model="trainTable.trainName" clearable placeholder="请输入培训名称"></el-input>
+                                <el-input v-model="trainTable.trainName" clearable
+                                          placeholder="请输入培训名称"></el-input>
                             </el-form-item>
                             <el-form-item label="培训地点" :label-width="formLabelWidth">
-                                <el-input v-model="trainTable.trainLocation" clearable placeholder="请输入培训地点"></el-input>
+                                <el-input v-model="trainTable.trainLocation" clearable
+                                          placeholder="请输入培训地点"></el-input>
                             </el-form-item>
                             <el-form-item label="培训日期" :label-width="formLabelWidth">
                                 <el-date-picker type="date" placeholder="开始日期" v-model="trainTable.startDate"
@@ -296,10 +302,12 @@
                     <el-dialog title="培训信息" :visible.sync="trainVisible2">
                         <el-form :model="trainTable">
                             <el-form-item label="培训名称" :label-width="formLabelWidth">
-                                <el-input v-model="trainTable.trainName" clearable placeholder="请输入培训名称"></el-input>
+                                <el-input v-model="trainTable.trainName" clearable
+                                          placeholder="请输入培训名称"></el-input>
                             </el-form-item>
                             <el-form-item label="培训地点" :label-width="formLabelWidth">
-                                <el-input v-model="trainTable.trainLocation" clearable placeholder="请输入培训地点"></el-input>
+                                <el-input v-model="trainTable.trainLocation" clearable
+                                          placeholder="请输入培训地点"></el-input>
                             </el-form-item>
                             <el-form-item label="培训日期" :label-width="formLabelWidth">
                                 <el-date-picker type="date" placeholder="开始日期" v-model="trainTable.startDate"
@@ -365,7 +373,6 @@
                                         prop="description"
                                         align="center">
                                 </el-table-column>
-
                                 <el-table-column
                                         label="操作"
                                         align="center">
@@ -389,6 +396,455 @@
                     </el-col>
                 </el-row>
             </el-main>
+            <!--员工信息-->
+            <el-main v-if="adminPages[3] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-input v-model="employeePage.employeeName" clearable placeholder="请输入员工姓名"
+                                  style="width: 200px"></el-input>
+                        <el-input v-model="employeePage.department" clearable placeholder="请输入部门"
+                                  style="width: 200px"></el-input>
+                        <el-input v-model="employeePage.role" clearable placeholder="请输入职位"
+                                  style="width: 200px"></el-input>
+                        <el-button type="primary" plain @click="showEmployees(0)">精准查找</el-button>
+                        <el-button type="primary" plain @click="showEmployees(1)">模糊查找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-button type="success" plain @click="employeeVisible = true">注 册</el-button>
+                        <el-button type="danger" plain @click="deleteEmployees">批量删除</el-button>
+                    </el-col>
+                    <!--注册-->
+                    <el-dialog title="员工信息" :visible.sync="employeeVisible">
+                        <el-form :model="employeeTable">
+                            <el-form-item label="用户名" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.username" clearable
+                                          placeholder="请输入用户名"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.name" clearable
+                                          placeholder="请输入姓名"></el-input>
+                            </el-form-item>
+                            <el-form-item label="电话" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.phone" clearable
+                                          placeholder="请输入电话"></el-input>
+                            </el-form-item>
+                            <el-form-item label="邮箱" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.email" clearable
+                                          placeholder="请输入邮箱"></el-input>
+                            </el-form-item>
+                            <el-form-item label="性别" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.gender" placeholder="请选择">
+                                    <el-option
+                                            v-for="gender in genderOptions"
+                                            :key="gender.value"
+                                            :label="gender.label"
+                                            :value="gender.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="部门" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.department" placeholder="请选择部门">
+                                    <el-option
+                                            v-for="department in departmentOptions"
+                                            :key="department.value"
+                                            :label="department.label"
+                                            :value="department.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="身份" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.role" placeholder="请选择身份">
+                                    <el-option
+                                            v-for="role in roleOptions"
+                                            :key="role.value"
+                                            :label="role.label"
+                                            :value="role.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="employeeVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="selectEmployeeByData(0)">确 定</el-button>
+                        </div>
+                    </el-dialog>
+                    <!--修改数据-->
+                    <el-dialog title="培训信息" :visible.sync="employeeVisible2">
+                        <el-form :model="employeeTable">
+                            <el-form-item label="用户名" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.username" clearable
+                                          placeholder="请输入用户名"></el-input>
+                            </el-form-item>
+                            <el-form-item label="姓名" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.name" clearable
+                                          placeholder="请输入姓名"></el-input>
+                            </el-form-item>
+                            <el-form-item label="电话" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.phone" clearable
+                                          placeholder="请输入电话"></el-input>
+                            </el-form-item>
+                            <el-form-item label="邮箱" :label-width="formLabelWidth">
+                                <el-input v-model="employeeTable.email" clearable
+                                          placeholder="请输入邮箱"></el-input>
+                            </el-form-item>
+                            <el-form-item label="性别" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.gender" placeholder="请选择">
+                                    <el-option
+                                            v-for="gender in genderOptions"
+                                            :key="gender.value"
+                                            :label="gender.label"
+                                            :value="gender.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="部门" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.department" placeholder="请选择部门">
+                                    <el-option
+                                            v-for="department in departmentOptions"
+                                            :key="department.value"
+                                            :label="department.label"
+                                            :value="department.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                            <el-form-item label="身份" :label-width="formLabelWidth">
+                                <el-select v-model="employeeTable.role" placeholder="请选择身份">
+                                    <el-option
+                                            v-for="role in roleOptions"
+                                            :key="role.value"
+                                            :label="role.label"
+                                            :value="role.value">
+                                    </el-option>
+                                </el-select>
+                            </el-form-item>
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="employeeVisible2 = false">取 消</el-button>
+                            <el-button type="primary" @click="selectEmployeeByData(1)">确 定</el-button>
+                        </div>
+                    </el-dialog>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="employeeValue"
+                                    style="width: 100%"
+                                    @selection-change="employeeSelectionChange">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        type="selection"
+                                        width="55">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="头像"
+                                        align="center">
+                                    <template v-slot="scope">
+                                        <el-image :preview-src-list="[scope.row.avatar]" :src="scope.row.avatar"
+                                                  style="width: 50px; height: 50px;"
+                                                  @click="employeeImageClick"></el-image>
+                                    </template>
+                                </el-table-column>
+                                <el-table-column
+                                        label="姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="性别"
+                                        prop="gender"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="用户名"
+                                        prop="username"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="电话"
+                                        prop="phone"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="邮箱"
+                                        prop="email"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="身份"
+                                        prop="role"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        align="center">
+                                    <!--修改(当前数据id)-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain @click="selectEmployee(scope.row)">编 辑
+                                        </el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="employeePage.currentPage"
+                                @current-change="employeeCurrentChange"
+                                :total="employeePage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--请假审批-->
+            <el-main v-if="adminPages[4] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-input v-model="leavePage.reason" clearable placeholder="请输入请假原因"
+                                  style="width: 200px"></el-input>
+                        <el-button type="primary" plain @click="showLeaves">查 找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="leaveValue"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="所属部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="身份"
+                                        prop="role"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假原因"
+                                        prop="reason"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="开始日期"
+                                        prop="startDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="结束日期"
+                                        prop="endDate"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="请假天数"
+                                        prop="leaveTime"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="审核"
+                                        align="center">
+                                    <!--请假批准-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain size="small" @click="judgeLeave(0,scope.row)">批准</el-button>
+                                        <el-button type="danger" plain size="small" @click="judgeLeave(1,scope.row)">驳回</el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="leavePage.currentPage"
+                                @current-change="leaveCurrentChange"
+                                :total="leavePage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--离职审批-->
+            <el-main v-if="adminPages[5] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-select v-model="quitPage.department" style="width: 200px" placeholder="请选择部门">
+                            <el-option label="所有部门" value=""></el-option>
+                            <el-option label="后勤部" value="后勤部"></el-option>
+                            <el-option label="财务部" value="财务部"></el-option>
+                            <el-option label="科技部" value="科技部"></el-option>
+                            <el-option label="人事部" value="人事部"></el-option>
+                            <el-option label="人力资源部" value="人力资源部"></el-option>
+                        </el-select>
+                        <el-button type="primary" plain @click="showQuits">查 找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="quitValue"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="所属部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="身份"
+                                        prop="role"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="离职原因"
+                                        prop="quitReason"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="审核"
+                                        align="center">
+                                    <!--离职批准-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain size="small" @click="judgeQuit(0,scope.row)">批准</el-button>
+                                        <el-button type="danger" plain size="small" @click="judgeQuit(1,scope.row)">驳回</el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="quitPage.currentPage"
+                                @current-change="quitCurrentChange"
+                                :total="quitPage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--培训成绩设置-->
+            <el-main v-if="adminPages[6] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-input v-model="scorePage.trainName" clearable placeholder="请输入培训名称"
+                                  style="width: 200px"></el-input>
+                        <el-button type="primary" plain @click="showScores">查 找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="scoreValue"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="员工姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="所属部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="职位"
+                                        prop="role"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训名称"
+                                        prop="trainName"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="培训地点"
+                                        prop="trainLocation"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="操作"
+                                        align="center">
+                                    <!--评分-->
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain @click="updateScore(scope.row)">打分</el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="scorePage.currentPage"
+                                @current-change="scoreCurrentChange"
+                                :total="scorePage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+
 
         </el-container>
     </el-container>
@@ -409,6 +865,7 @@
         //生命周期
         mounted() {
             //系统首页
+            this.showLoginMessage(); //登录成功提示
             this.selectAdminHome();
         },
         //数据
@@ -426,47 +883,119 @@
                     email: '',
                 },
                 //公告信息
-                announceValue:[], //公告表格
-                announceSelection:[],//公告复选框数据
-                announcePage:{
-                    currentPage:'1', //当前页
-                    tollCount:'', //总数
-                    announceTitle:'',//公告标题
+                announceValue: [], //公告表格
+                announceSelection: [],//公告复选框数据
+                announcePage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    announceTitle: '',//公告标题
                 }, //分页条数据
-                announceTable:{
-                    id:'',
-                    title:'',
-                    content:'',
-                    writer:'',
-                    createTime:new Date(),
+                announceTable: {
+                    id: '',
+                    title: '',
+                    content: '',
+                    writer: '',
+                    createTime: new Date(),
                 },//公告表单
-                announceBox:[], //主键Id数组d
-                announceVisible:false,
-                announceVisible2:false,
+                announceBox: [], //主键Id数组d
+                announceVisible: false,
+                announceVisible2: false,
                 //培训信息
-                trainValue:[], //培训表格
-                trainSelection:[],//培训复选框数据
-                trainPage:{
-                    currentPage:'1', //当前页
-                    tollCount:'', //总数
-                    trainName:'',//培训名称
+                trainValue: [], //培训表格
+                trainSelection: [],//培训复选框数据
+                trainPage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    trainName: '',//培训名称
                 }, //分页条数据
-                trainTable:{
-                    id:'',
+                trainTable: {
+                    id: '',
                     trainName: '',
-                    trainLocation:'',
-                    description:'',
-                    startDate:'',
-                    endDate:'',
+                    trainLocation: '',
+                    description: '',
+                    startDate: '',
+                    endDate: '',
                 },//培训表单
-                trainBox:[], //主键Id数组d
-                trainVisible:false,
-                trainVisible2:false,
+                trainBox: [], //主键Id数组d
+                trainVisible: false,
+                trainVisible2: false,
+                //员工
+                employeeValue: [], //员工表格
+                employeeSelection: [],//培训复选框数据
+                employeePage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    employeeName: '',//员工姓名
+                    department: '',//部门
+                    role: '', //身份
+                    gender: '',
+                }, //分页条数据
+                employeeTable: {
+                    id: '',
+                    avatar: '',//头像
+                    username: '',//用户名
+                    name: '',
+                    phone: '',
+                    email: '',
+                    department: '',
+                    role: '', //身份
+                },//员工表单
+                employeeBox: [], //主键Id数组
+                employeeVisible: false,
+                employeeVisible2: false,
+                departmentOptions: [{
+                    value: '财务部',
+                    label: '财务部'
+                }, {
+                    value: '人事部',
+                    label: '人事部'
+                }, {
+                    value: '科技部',
+                    label: '科技部'
+                }, {
+                    value: '人力资源部',
+                    label: '人力资源部'
+                }],
+                roleOptions: [{
+                    value: '员工',
+                    label: '员工'
+                }, {
+                    value: '主管',
+                    label: '主管',
+                }],
+                genderOptions: [{
+                    value: '男',
+                    label: '男'
+                }, {
+                    value: '女',
+                    label: '女',
+                }],
+                //请假信息
+                leaveValue: [], //请假表格
+                leavePage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    reason: '',//请假原因
+                }, //分页条数据
+                //离职信息
+                quitValue: [], //离职表格
+                quitPage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    department: '',//部门
+                }, //分页条数据
+                //培训成绩
+                scoreValue: [], //培训成绩表格
+                scorePage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    trainName: '',//培训名称
+                }, //分页条数据
 
                 //对话框width
                 formLabelWidth: '120px',
                 //页面渲染
-                adminPages:[false,false,false,false,false],
+                adminPages: [false, false, false, false, false, false, false, false],
                 //系统首页选项
                 activeIndex: '0',
                 //系统首页日期
@@ -490,13 +1019,25 @@
                 //key:选项索引，keyPath:索引路径数组
                 switch (key) {
                     case '0':
-                        this.selectAdminHome(); //系统首页数据获取
+                        this.selectAdminHome();
+                        break;
+                    case '1-1':
+                        this.showEmployees();
+                        break;
+                    case '2-1':
+                        this.showLeaves();
+                        break;
+                    case '2-2':
+                        this.showQuits();
+                        break;
+                    case '2-4':
+                        this.showScores();
                         break;
                     case '3-1':
-                        this.showAnnounce(); //系统首页数据获取
+                        this.showAnnounce();
                         break;
                     case '3-2':
-                        this.showTrain(); //系统首页数据获取
+                        this.showTrain();
                         break;
                     default:
                         window.alert("keyPath:" + keyPath);
@@ -535,20 +1076,20 @@
                 })
             },
             //公告
-            showAnnounce(){
+            showAnnounce() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/showAnnounce",
                     data: this.announcePage,
                 }).then((resp) => {
                     //获取、刷新数据
-                    this.announceValue= resp.data.rows;
+                    this.announceValue = resp.data.rows;
                     this.announcePage.tollCount = resp.data.tollCount;
                     this.adminSelect();
                     this.showPages(1);
                 })
             },
-            addAnnounce(){
+            addAnnounce() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/addAnnounce",
@@ -557,15 +1098,15 @@
                     if (resp.data === "success") {
                         //关闭对话框、刷新数据、成功提示
                         this.announceVisible = false;
-                        this.message("添加成功",'success');
+                        this.message("添加成功", 'success');
                         this.showAnnounce();
                     } else {
                         this.announceVisible = false;
-                        this.message("添加失败",'error');
+                        this.message("添加失败", 'error');
                     }
                 })
             },
-            deleteAnnounce(row){
+            deleteAnnounce(row) {
                 //弹框提示，是否删除
                 this.$confirm('此操作将删除公告, 是否确定?', '提示', {
                     confirmButtonText: '确定',
@@ -579,16 +1120,16 @@
                         if (resp.data === "success") {
                             //刷新数据,信息提示
                             this.showAnnounce();
-                            this.message("删除成功",'success');
+                            this.message("删除成功", 'success');
                         } else {
-                            this.message("删除失败",'error');
+                            this.message("删除失败", 'error');
                         }
                     })
                 }).catch(() => {
-                    this.message("处理有误",'error');
+                    this.message("处理有误", 'error');
                 });
             },
-            selectAnnounce(row){
+            selectAnnounce(row) {
                 axios({
                     method: "get",
                     url: "http://localhost:8080/resource_app/admin/selectAnnounce?id=" + row.id,
@@ -597,22 +1138,22 @@
                     this.announceVisible2 = true; //打开对话框
                 })
             },
-            updateAnnounce(){
+            updateAnnounce() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/updateAnnounce",
-                    data:this.announceTable,
+                    data: this.announceTable,
                 }).then((resp) => {
                     if (resp.data === "success") {
-                        this.message("修改成功",'success');
+                        this.message("修改成功", 'success');
                         this.announceVisible2 = false;
                         this.showAnnounce();
                     } else {
-                        this.message("修改失败",'error');
+                        this.message("修改失败", 'error');
                     }
                 })
             },
-            deleteAnnounces(){
+            deleteAnnounces() {
                 this.$confirm('此操作将删除数据, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -631,13 +1172,13 @@
                         //刷新,提示
                         if (resp.data === "success") {
                             this.showAnnounce();
-                            this.message("删除成功",'success');
+                            this.message("删除成功", 'success');
                         } else {
-                            this.message("删除失败",'error');
+                            this.message("删除失败", 'error');
                         }
                     })
                 }).catch(() => {
-                    this.message("操作失败",'error');
+                    this.message("操作失败", 'error');
                 });
             },
             announceSelectionChange(val) {
@@ -648,20 +1189,20 @@
                 this.showAnnounce();
             },
             //培训
-            showTrain(){
+            showTrain() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/showTrain",
                     data: this.trainPage,
                 }).then((resp) => {
                     //获取、刷新数据
-                    this.trainValue= resp.data.rows;
+                    this.trainValue = resp.data.rows;
                     this.trainPage.tollCount = resp.data.tollCount;
                     this.adminSelect();
                     this.showPages(2);
                 })
             },
-            addTrain(){
+            addTrain() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/addTrain",
@@ -670,15 +1211,15 @@
                     if (resp.data === "success") {
                         //关闭对话框、刷新数据、成功提示
                         this.trainVisible = false;
-                        this.message("添加成功",'success');
+                        this.message("添加成功", 'success');
                         this.showTrain();
                     } else {
                         this.tainVisible = false;
-                        this.message("添加失败",'error');
+                        this.message("添加失败", 'error');
                     }
                 })
             },
-            deleteTrain(row){
+            deleteTrain(row) {
                 //弹框提示，是否删除
                 this.$confirm('此操作将删除培训, 是否确定?', '提示', {
                     confirmButtonText: '确定',
@@ -692,16 +1233,16 @@
                         if (resp.data === "success") {
                             //刷新数据,信息提示
                             this.showTrain();
-                            this.message("删除成功",'success');
+                            this.message("删除成功", 'success');
                         } else {
-                            this.message("删除失败",'error');
+                            this.message("删除失败", 'error');
                         }
                     })
                 }).catch(() => {
-                    this.message("取消删除",'error');
+                    this.message("取消删除", 'error');
                 });
             },
-            selectTrain(row){
+            selectTrain(row) {
                 axios({
                     method: "get",
                     url: "http://localhost:8080/resource_app/admin/selectTrain?id=" + row.id,
@@ -710,22 +1251,22 @@
                     this.trainVisible2 = true; //打开对话框
                 })
             },
-            updateTrain(){
+            updateTrain() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/updateTrain",
-                    data:this.trainTable,
+                    data: this.trainTable,
                 }).then((resp) => {
                     if (resp.data === "success") {
-                        this.message("修改成功",'success');
+                        this.message("修改成功", 'success');
                         this.trainVisible2 = false;
                         this.showTrain();
                     } else {
-                        this.message("修改失败",'error');
+                        this.message("修改失败", 'error');
                     }
                 })
             },
-            deleteTrains(){
+            deleteTrains() {
                 this.$confirm('此操作将删除数据, 是否继续?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
@@ -744,13 +1285,13 @@
                         //刷新,提示
                         if (resp.data === "success") {
                             this.showTrain();
-                            this.message("删除成功",'success');
+                            this.message("删除成功", 'success');
                         } else {
-                            this.message("删除失败",'error');
+                            this.message("删除失败", 'error');
                         }
                     })
                 }).catch(() => {
-                    this.message("取消删除",'error');
+                    this.message("取消删除", 'error');
                 });
             },
             trainSelectionChange(val) {
@@ -760,8 +1301,234 @@
                 this.trainPage.currentPage = val;//重新设置当前页码
                 this.showTrain();
             },
+            //员工
+            showEmployees(index) {
+                if (index == null) {
+                    index = 1; // 默认模糊
+                }
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/showEmployees?index=" + index,
+                    data: this.employeePage,
+                }).then((resp) => {
+                    //获取、刷新数据
+                    this.employeeValue = resp.data.rows;
+                    this.employeePage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(3);
+                })
+            },
+            addEmployee() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/addEmployee",
+                    data: this.employeeTable,
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        //刷新数据、成功提示
+                        this.employeeVisible = false;
+                        this.message("添加成功", 'success');
+                        this.showEmployees();
+                    } else {
+                        this.employeeVisible = false;
+                        this.message("添加失败", 'error');
+                    }
+                })
+            },
+            selectEmployeeByData(index) {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/selectEmployeeByData?index="+index,
+                    data: this.employeeTable,
+                }).then((resp) => {
+                    if (resp.data === "add") {
+                        this.addEmployee();
+                    }
+                    else if (resp.data === "update"){
+                        this.updateEmployee();
+                    }
+                    else {
+                        this.employeeVisible = false;
+                        this.message("用户名or电话or邮箱已存在", 'error');
+                    }
+                })
+            }, //添加员工检查用户名、邮箱、电话是否重复
+            selectEmployee(row) {
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/selectEmployee?id=" + row.id,
+                }).then((resp) => {
+                    this.employeeTable = resp.data;//数据回显
+                    this.employeeVisible2 = true; //打开对话框
+                })
+            },
+            updateEmployee() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/updateEmployee",
+                    data: this.employeeTable,
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        this.message("修改成功", 'success');
+                        this.employeeVisible2 = false;
+                        this.showEmployees();
+                    } else {
+                        this.message("修改失败", 'error');
+                    }
+                })
+            },
+            deleteEmployees() {
+                this.$confirm('此操作将删除数据, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    //获取所选框id主键
+                    for (let i = 0; i < this.employeeSelection.length; i++) {
+                        let employeeTable = this.employeeSelection[i];
+                        this.employeeBox[i] = employeeTable.id;
+                    }
+                    axios({
+                        method: "post",
+                        url: "http://localhost:8080/resource_app/admin/deleteEmployees",
+                        data: this.employeeBox
+                    }).then((resp) => {
+                        //刷新,提示
+                        if (resp.data === "success") {
+                            this.showEmployees();
+                            this.message("删除成功", 'success');
+                        } else {
+                            this.message("删除失败", 'error');
+                        }
+                    })
+                }).catch(() => {
+                    this.message("取消删除", 'error');
+                });
+            },
+            employeeSelectionChange(val) {
+                this.employeeSelection = val;
+            },
+            employeeCurrentChange(val) {
+                this.employeePage.currentPage = val;//重新设置当前页码
+                this.showEmployees();
+            },
+            employeeImageClick(event) {
+                this.$refs.imagePreview.open();
+            }, //打开头像
+            //请假
+            //请假
+            showLeaves() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/showLeaves",
+                    data: this.leavePage,
+                }).then((resp) => {
+                    //获取、刷新数据
+                    this.leaveValue = resp.data.rows;
+                    this.leavePage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(4);
+                })
+            },
+            judgeLeave(val,row){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/admin/judgeLeave?value="+val+"&id="+row.id,
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        this.showLeaves();
+                        this.message("审核通过",'success');
+                    }
+                    else {
+                        this.message("审核失败",'error');
+                    }
+                })
+
+            },//请假处理
+            leaveCurrentChange(val) {
+                this.leavePage.currentPage = val;//重新设置当前页码
+                this.showLeaves();
+            },
+            //离职
+            showQuits() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/showQuits",
+                    data: this.quitPage,
+                }).then((resp) => {
+                    //获取、刷新数据
+                    this.quitValue = resp.data.rows;
+                    this.quitPage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(5);
+                })
+            },
+            judgeQuit(val,row){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/admin/judgeQuit?value="+val+"&id="+row.id,
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        this.showQuits();
+                        this.message("审核通过",'success');
+                    }
+                    else {
+                        this.message("审核失败",'error');
+                    }
+                })
+
+            },//离职处理
+            quitCurrentChange(val) {
+                this.leavePage.currentPage = val;//重新设置当前页码
+                this.showQuits();
+            },
+            //培训成绩
+            showScores() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/showScores",
+                    data: this.scorePage,
+                }).then((resp) => {
+                    //获取、刷新数据
+                    this.scoreValue = resp.data.rows;
+                    this.scorePage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(6);
+                })
+            },
+            updateScore(val,row){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/admin/judgeQuit?value="+val+"&id="+row.id,
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        this.showQuits();
+                        this.message("审核通过",'success');
+                    }
+                    else {
+                        this.message("审核失败",'error');
+                    }
+                })
+
+            },//打分
+            scoreCurrentChange(val) {
+                this.scorePage.currentPage = val;//重新设置当前页码
+                this.showScores();
+            },
+
+            //登录成功信息展示
+            showLoginMessage() {
+                // 读取本地存储中的登录成功的信息
+                const loginSuccess = localStorage.getItem('loginAdminSuccess');
+                if (loginSuccess === 'true') {
+                    //消息
+                    this.message("登录成功",'success');
+                    // 清除本地存储中的登录成功的信息
+                    localStorage.removeItem('loginSuccess');
+                }
+            },
             //信息提示
-            message(message,type) {
+            message(message, type) {
                 this.$message({
                     showClose: true,
                     message: message,

@@ -20,6 +20,7 @@
         <result column="start_date" property="startDate"/>
         <result column="end_date" property="endDate"/>
         <result column="employee_id" property="employeeId"/>
+        <result column="leave_time" property="leaveTime"/>
     </resultMap>
     <resultMap id="employeeQuit" type="quit">
         <result column="employee_id" property="employeeId"/>
@@ -43,7 +44,7 @@
     <resultMap id="announcement" type="announcement">
         <result column="create_time" property="createTime"/>
     </resultMap>
-    
+
     <update id="updateAnnounce">
         update tb_announcement
         set title       = #{title},
@@ -145,11 +146,11 @@
     </select>
     <update id="updateTrain">
         update tb_train
-        set train_name = #{trainName},
+        set train_name     = #{trainName},
             train_location = #{trainLocation},
-            start_date = #{startDate},
-            end_date = #{endDate},
-            description = #{description}
+            start_date     = #{startDate},
+            end_date       = #{endDate},
+            description    = #{description}
         where id = #{id};
     </update>
     <delete id="deleteTrains">
@@ -160,7 +161,188 @@
             #{id}
         </foreach>
     </delete>
+    <select id="showEmployees" resultType="com.it.pojo.Employee">
+        select id, username, password, name, gender, role, phone, avatar, email, department
+        from tb_employee
+        <where>
+            <if test="employeeName != null and employeeName !='' ">
+                and `name` like #{employeeName}
+            </if>
+            <if test="department != null and department !='' ">
+                and department like #{department}
+            </if>
+            <if test="role != null and role !='' ">
+                and `role` like #{role}
+            </if>
+        </where>
+        limit #{begin},10;
 
+    </select>
+    <select id="employeesCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        <where>
+            <if test="employeeName != null and employeeName !='' ">
+                and `name` like #{employeeName}
+            </if>
+            <if test="department != null and department !='' ">
+                and department like #{department}
+            </if>
+            <if test="role != null and role !='' ">
+                and `role` like #{role}
+            </if>
+        </where>
+    </select>
+    <select id="showEmployees2" resultType="com.it.pojo.Employee">
+        select id, username, password, name, gender, role, phone, avatar, email, department
+        from tb_employee
+        <where>
+            <if test="employeeName != null and employeeName !='' ">
+                and `name` = #{employeeName}
+            </if>
+            <if test="department != null and department !='' ">
+                and department = #{department}
+            </if>
+            <if test="role != null and role !='' ">
+                and `role` = #{role}
+            </if>
+        </where>
+        limit #{begin},10;
+    </select>
+    <select id="employeesCount2" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        <where>
+            <if test="employeeName != null and employeeName !='' ">
+                and `name` = #{employeeName}
+            </if>
+            <if test="department != null and department !='' ">
+                and department = #{department}
+            </if>
+            <if test="role != null and role !='' ">
+                and `role` = #{role}
+            </if>
+        </where>
+    </select>
+    <select id="selectEmployeeByData" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        where username = #{username}
+           or phone = #{phone}
+           or email = #{email};
+    </select>
+    <insert id="addEmployee">
+        insert into tb_employee (username, password, name, gender, role, phone, email, department)
+        values (#{username}, #{password}, #{name}, #{gender}, #{role}, #{phone}, #{email}, #{department});
+    </insert>
+
+    <select id="selectEmployee" resultType="com.it.pojo.Employee">
+        select id,
+               username,
+               password,
+               name,
+               gender,
+               role,
+               phone,
+               avatar,
+               email,
+               department
+        from tb_employee
+        where id = #{id};
+    </select>
+    <update id="updateEmployee">
+        update tb_employee
+        set username   = #{username},
+            name       = #{name},
+            gender     = #{gender},
+            role       = #{role},
+            phone      = #{phone},
+            email      = #{email},
+            department = #{department}
+        where id = #{id};
+    </update>
+    <delete id="deleteEmployees">
+        delete
+        from tb_employee
+        where id in
+        <foreach collection="employeesId" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>;
+    </delete>
+
+    <select id="showLeaves" resultMap="employeeLeave">
+        select t2.id,
+               t1.name,
+               role,
+               department,
+               leave_type,
+               start_date,
+               end_date,
+               datediff(end_date, start_date) as leave_time,
+               reason
+        from tb_employee as t1 join tb_leave as t2
+        on t1.id = t2.employee_id
+        where t2.reason like #{reason} and t2.leave_status = '未处理'
+        order by start_date desc, end_date
+        limit #{begin},10;
+    </select>
+    <select id="leavesCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee as t1 join tb_leave as t2
+        on t1.id = t2.employee_id
+        where t2.reason like #{reason} and t2.leave_status = '未处理';
+    </select>
+
+    <update id="judgeLeave">
+        update tb_leave
+        set leave_status = #{leaveStatus}
+        where id = #{id};
+    </update>
+
+
+    <select id="showQuits" resultMap="employeeQuit">
+        select t2.id,
+               t1.name,
+               t1.department,
+               t1.role,
+               t2.quit_reason
+        from tb_employee as t1 join tb_quit as t2
+        on t1.id = t2.employee_id
+        where department like #{department} and quit_status = '处理中'and delete_status = '在职'
+        limit #{begin},10;
+    </select>
+    <select id="quitsCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee as t1 join tb_quit as t2
+        on t1.id = t2.employee_id
+        where department like #{department} and quit_status = '处理中' and delete_status = '在职'
+    </select>
+
+    <update id="judgeQuit">
+        update tb_quit
+        set quit_status = #{quitStatus},
+            delete_status = #{deleteStatus}
+            where id = #{id};
+    </update>
+    <select id="showScores" resultMap="employeeScore">
+        select t1.id, t2.name, t2.department,t2.role, t3.train_name, t3.train_location
+        from tb_score as t1
+                 inner join tb_employee as t2 on t1.employee_id = t2.id
+                 inner join tb_train as t3 on t1.train_id = t3.id
+        where t1.score = -1
+          and t3.train_name like #{trainName}
+        order by t3.end_date, t3.start_date desc
+        limit #{begin},10;
+    </select>
+    <select id="scoresCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_score as t1
+                 inner join tb_employee as t2 on t1.employee_id = t2.id
+                 inner join tb_train as t3 on t1.train_id = t3.id
+        where t1.score = -1
+          and t3.train_name like #{trainName}
+        order by t3.end_date, t3.start_date desc
+    </select>
 
 
 </mapper>

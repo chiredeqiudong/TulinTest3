@@ -19,7 +19,25 @@ public class Score {
     private String startDate;
     private String endDate;
     private int trainTime;
+    private String department;
     private double score;
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String department) {
+        this.department = department;
+    }
 
     public Integer getId() {
         return id;

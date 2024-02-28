@@ -210,12 +210,10 @@
         values (#{employeeId},#{name},#{leaveType},#{startDate},#{endDate},#{reason},#{leaveStatus});
     </insert>
     <select id="showQuit" resultMap="employeeQuit">
-        select id, employee_id, name, department, quit_reason, quit_status
-        from tb_quit
+        select t1.id, employee_id,t2.name,t2.department,t2.role,quit_reason, quit_status
+        from tb_quit as t1 join tb_employee as t2
+        on t1.employee_id = t2.id
         <where>
-            <if test="employeeId != null">
-                and employee_id = #{employeeId}
-            </if>
             <if test="employeeId != null">
                 and quit_status != '同意'
             </if>
@@ -242,8 +240,8 @@
         limit #{begin},10;
     </select>
     <insert id="addQuit">
-        insert into tb_quit (employee_id, name, department, quit_reason, quit_status)
-        values (#{employeeId},#{name},#{department},#{quitReason},#{quitStatus});
+        insert into tb_quit (employee_id, quit_reason, quit_status)
+        values (#{employeeId},#{quitReason},#{quitStatus});
     </insert>
 
     <delete id="deleteQuit">
@@ -263,7 +261,7 @@
                 and employee_id = #{employeeId}
             </if>
             <if test="employeeId != null">
-                and score != 0
+                and score >= 0
             </if>
             <if test="trainName != null and trainName !='' ">
                 and train_name like #{trainName}

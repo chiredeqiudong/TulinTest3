@@ -1,9 +1,6 @@
 package com.it.mapper;
 
-import com.it.pojo.Admin;
-import com.it.pojo.Announcement;
-import com.it.pojo.PageBean;
-import com.it.pojo.Train;
+import com.it.pojo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -121,5 +118,138 @@ public interface AdminMapper {
      */
     void deleteTrains(@Param("trainsId") int[] trainsId);
 
+    /**
+     * showEmployees:查询员工数据
+     * @param begin : 开始索引
+     * @param employeeName : 员工姓名
+     * @param department : 部门
+     * @param role :职位
+     * @return : 员工数据
+     */
+    List<Employee> showEmployees(@Param("begin") int begin, @Param("employeeName") String employeeName, @Param("department") String department, @Param("role") String role);
 
+    /**
+     * employeesCount:查询员工数据
+     * @param begin : 开始索引
+     * @param employeeName : 员工姓名
+     * @param department : 部门
+     * @param role :职位
+     * @return : 员工个数
+     */
+    int employeesCount(@Param("begin") int begin, @Param("employeeName") String employeeName, @Param("department") String department, @Param("role") String role);
+
+    /**
+     * showEmployees2:查询员工数据
+     * @param begin : 开始索引
+     * @param employeeName : 员工姓名
+     * @param department : 部门
+     * @param role :职位
+     * @return : 员工数据
+     */
+    List<Employee> showEmployees2(@Param("begin") int begin, @Param("employeeName") String employeeName, @Param("department") String department, @Param("role") String role);
+
+    /**
+     * employeesCount:查询员工数据
+     * @param begin : 开始索引
+     * @param employeeName : 员工姓名
+     * @param department : 部门
+     * @param role :职位
+     * @return : 员工个数
+     */
+    int employeesCount2(@Param("begin") int begin, @Param("employeeName") String employeeName, @Param("department") String department, @Param("role") String role);
+
+    /**
+     * selectEmployeeByData:查询员工数据
+     * @param employee : 员工对象
+     * @return : 员工
+     */
+    int selectEmployeeByData(Employee employee);
+
+    /**
+     * addEmployee:添加培训数据
+     * @param employee : 员工
+     */
+    void addEmployee(Employee employee);
+
+    /**
+     * selectEmployee:数据回显
+     * @param id : 主键
+     * @return 员工数据
+     */
+    Employee selectEmployee(int id);
+
+    /**
+     * updateEmployee:修改数据
+     * @param employee : 员工数据
+     */
+    void updateEmployee(Employee employee);
+
+    /**
+     * deleteEmployees:批量删除
+     * @param employeesId : id数据
+     */
+    void deleteEmployees(@Param("employeesId") int[] employeesId);
+
+    /**
+     * showLeaves : 展示请假未处理的数据
+     * @param begin : 开始索引
+     * @param reason : 请假原因
+     * @return 展示请假未处理的数据
+     * */
+    List<Leave> showLeaves(@Param("begin") int begin,@Param("reason") String reason);
+
+    /**
+     * leavesCount : 请假未处理的数据个数
+     * @param begin : 开始索引
+     * @param reason : 请假原因
+     * @return 请假未处理的数据个数
+     * */
+    int leavesCount(@Param("begin") int begin,@Param("reason") String reason);
+
+    /**
+     * judgeLeave : 请假处理
+     * @param id : id
+     * @param leaveStatus : 审核结果
+     * */
+    void judgeLeave(@Param("id") int id,@Param("leaveStatus") String leaveStatus);
+
+    /**
+     * showQuits : 展示离职未处理的数据
+     * @param begin : 开始索引
+     * @param department : 部门
+     * @return 离职未处理的数据
+     * */
+    List<Quit> showQuits(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * quitsCount : 展示离职未处理的数据
+     * @param begin : 开始索引
+     * @param department : 部门
+     * @return 离职未处理的数据个数
+     * */
+    int quitsCount(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * judgeQuit : 离职处理
+     * @param id : id
+     * @param quitStatus : 审核结果
+     * @param deleteStatus : 软删除结果
+     * */
+    void judgeQuit(@Param("id") int id,@Param("quitStatus") String quitStatus,@Param("deleteStatus") String deleteStatus);
+
+    /**
+     * showScores : 展示培训成绩未设置(-1)的数据
+     * @param begin : 开始索引
+     * @param trainName : 培训名称
+     * @return 为打分的的数据
+     * */
+    List<Score> showScores(@Param("begin") int begin,@Param("trainName") String trainName);
+
+    /**
+     * scoresCount : 展示培训成绩未设置(-1)的数据
+     * @param begin : 开始索引
+     * @param trainName : 培训名称
+     * @return 为打分的的数据
+     * */
+    int scoresCount(@Param("begin") int begin,@Param("trainName") String trainName);
 }

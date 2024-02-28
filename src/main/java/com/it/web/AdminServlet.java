@@ -315,6 +315,251 @@ public class AdminServlet extends MyHttpServlet {
 
     }
 
+    /**
+     * 展示员工信息
+     */
+    public void showEmployees(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showEmployees方法");
+        //数据处理
+        String jsonEmployee = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonEmployee,Page.class);
+        String index = req.getParameter("index");
+        int id = Integer.parseInt(index);
+        //service
+        if (id == 0){
+            PageBean<Employee> employeePageBean = adminService.showEmployees2(page);
+            //响应
+            String jsonString = JSON.toJSONString(employeePageBean);
+            resp.setContentType("text/json;charset=utf-8");
+            resp.getWriter().write(jsonString);
+        }
+        else {
+            //默认模糊
+            PageBean<Employee> employeePageBean = adminService.showEmployees(page);
+            //响应
+            String jsonString = JSON.toJSONString(employeePageBean);
+            resp.setContentType("text/json;charset=utf-8");
+            resp.getWriter().write(jsonString);
+        }
+
+
+    }
+
+    /**
+     * 添加数据验证
+     */
+    public void selectEmployeeByData(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用selectEmployeeByData方法");
+        //数据
+        String readLine = req.getReader().readLine();
+        Employee employee = JSON.parseObject(readLine, Employee.class);
+        String index = req.getParameter("index");
+        int parseInt = Integer.parseInt(index);
+        int count = adminService.selectEmployeeByData(employee);
+        //没有重复的数据
+        boolean flag = count == 0;
+        //service
+        if (parseInt == 0 ){
+            if (flag){
+                resp.getWriter().write("add");
+            }
+            else {
+                resp.getWriter().write("error");
+            }
+        }
+        if (parseInt == 1){
+            if (flag){
+                resp.getWriter().write("update");
+            }
+            else {
+                resp.getWriter().write("error");
+            }
+        }
+    }
+
+    /**
+     * 注册员工数据
+     */
+    public void addEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用addEmployee方法");
+        //json
+        String jsonTrain = req.getReader().readLine();
+        Employee employee = JSON.parseObject(jsonTrain, Employee.class);
+        if ( employee.getUsername().isEmpty() || employee.getName().isEmpty()){
+            resp.getWriter().write("error");
+        }
+        else {
+            //service
+            employee.setPassword("123456");
+            adminService.addEmployee(employee);
+            resp.getWriter().write("success");
+        }
+
+    }
+
+    /**
+     * 数据回显
+     */
+    public void selectEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用selectEmployee方法");
+        //数据
+        String id = req.getParameter("id");
+        int parseInt = Integer.parseInt(id);
+        //service
+        Employee employee = adminService.selectEmployee(parseInt);
+        //json
+        String jsonString = JSON.toJSONString(employee);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
+
+    /**
+     * 修改数据
+     */
+    public void updateEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用updateEmployee方法");
+        //json
+        String jsonEmployee = req.getReader().readLine();
+        Employee employee = JSON.parseObject(jsonEmployee,Employee.class);
+        //service
+        if ( employee.getUsername().isEmpty() || employee.getName().isEmpty()){
+            resp.getWriter().write("error");
+        }
+        else {
+            //service
+            adminService.updateEmployee(employee);
+            resp.getWriter().write("success");
+        }
+    }
+
+    /**
+     * 批量删除数据
+     */
+    public void deleteEmployees(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用deleteEmployees方法");
+        //主键数组
+        String jsonEmployees = req.getReader().readLine();
+        int[] employeesId = JSON.parseObject(jsonEmployees, int[].class);
+        if (employeesId.length == 0){
+            resp.getWriter().write("error");
+        }
+        else {
+            //service
+            adminService.deleteEmployees(employeesId);
+            resp.getWriter().write("success");
+        }
+
+    }
+
+    /**
+     * 展示请假信息
+     */
+    public void showLeaves(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showLeaves方法");
+        //数据处理
+        String jsonLeaves = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonLeaves,Page.class);
+        //service
+        PageBean<Leave> leavePageBean = adminService.showLeaves(page);
+        //响应
+        String jsonString = JSON.toJSONString(leavePageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+
+    }
+
+    /**
+     * 请假审核
+     * */
+    public void judgeLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用judgeLeave方法");
+        //数据处理
+        String parameter1 = req.getParameter("value");
+        String parameter2 = req.getParameter("id");
+        int value = Integer.parseInt(parameter1);
+        int id = Integer.parseInt(parameter2);
+        String leaveStatus = "驳回";
+        if (value == 0){
+            //批准
+            leaveStatus = "已批准";
+        }
+        //service
+        adminService.judgeLeave(id,leaveStatus);
+        //响应
+        resp.getWriter().write("success");
+
+    }
+
+    /**
+     * 展示离职申请
+     */
+    public void showQuits(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showQuits方法");
+        //数据处理
+        String jsonQuits = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonQuits,Page.class);
+        //service
+        PageBean<Quit> quitPageBean = adminService.showQuits(page);
+        //响应
+        String jsonString = JSON.toJSONString(quitPageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
+
+    /**
+     * 离职审核
+     * */
+    public void judgeQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用judgeQuit方法");
+        //数据处理
+        String parameter1 = req.getParameter("value");
+        String parameter2 = req.getParameter("id");
+        int value = Integer.parseInt(parameter1);
+        int id = Integer.parseInt(parameter2);
+        String quitStatus = "驳回";
+        String deleteStatus = "在职";
+        if (value == 0){
+            //离职
+            quitStatus = "已批准";
+            deleteStatus = "离职";
+        }
+        //service
+        adminService.judgeQuit(id,quitStatus,deleteStatus);
+        //响应
+        resp.getWriter().write("success");
+
+    }
+
+    /**
+     * 展示可以设置培训成绩的信息
+     */
+    public void showScores(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showScores方法");
+        //数据处理
+        String jsonScores = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonScores,Page.class);
+        //service
+        PageBean<Score> scorePageBean = adminService.showScores(page);
+        //响应
+        String jsonString = JSON.toJSONString(scorePageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
+
+
+
+
 
 
 
