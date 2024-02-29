@@ -344,5 +344,44 @@
         order by t3.end_date, t3.start_date desc
     </select>
 
+    <update id="updateScore">
+        update tb_score
+        set  score = #{score}
+        where id = #{id};
+    </update>
+
+    <select id="showAdminInfo" resultType="com.it.pojo.Admin">
+        select id, username, password, name, role, phone, avatar, email
+        from tb_admin
+        where id = #{id};
+    </select>
+
+    <update id="updateAdminInfo">
+        update tb_admin
+        set name = #{name},
+            username = #{username},
+            avatar = #{avatar},
+            phone = #{phone},
+            email = #{email}
+            where id = #{id};
+    </update>
+    <select id="adminCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_admin
+        where username = #{username}
+           or phone = #{phone}
+           or email = #{email};
+    </select>
+    <update id="updateAdminPassword">
+        update tb_admin
+        set password = #{checkPassword}
+        where id = #{id};
+    </update>
+
+
+
+
+
+
 
 </mapper>

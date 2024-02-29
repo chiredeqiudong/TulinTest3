@@ -472,6 +472,75 @@ public class AdminServiceImpl implements AdminService{
     }
 
     /**
+     * updateScore : 打分
+     * @param id    : id主键
+     * @param score : 分数
+     */
+    @Override
+    public void updateScore(int id, double score) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        mapper.updateScore(id,score);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
+     * showAdminInfo : 查询管理员
+     * @param id : id主键
+     * @return 管理员数据
+     */
+    @Override
+    public Admin showAdminInfo(int id) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        Admin admin = mapper.showAdminInfo(id);
+        sqlSession.close();
+        return admin;
+    }
+
+    /**
+     * updateAdminInfo : 修改管理员
+     * @param admin : 管理员
+     */
+    @Override
+    public void updateAdminInfo(Admin admin) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        mapper.updateAdminInfo(admin);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
+     * adminCount : 判断用户名是否重复
+     * @param username : 用户名
+     * @return 返回重复个数
+     */
+    @Override
+    public int adminCount(String username,String phone,String email) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        int count = mapper.adminCount(username,phone,email);
+        sqlSession.close();
+        return count;
+    }
+
+    /**
+     * updateAdminPassword : 修爱密码
+     * @param id            : 主键
+     * @param checkPassword : 新密码
+     */
+    @Override
+    public void updateAdminPassword(int id, String checkPassword) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        mapper.updateAdminPassword(id,checkPassword);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
      * adminSelect:管理员数据
      * @param adminId : 管理员id
      * @return : 管理员

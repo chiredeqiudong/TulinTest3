@@ -252,4 +252,38 @@ public interface AdminMapper {
      * @return 为打分的的数据
      * */
     int scoresCount(@Param("begin") int begin,@Param("trainName") String trainName);
+
+    /**
+     * updateScore : 打分
+     * @param id : id主键
+     * @param score : 分数
+     * */
+    void updateScore(@Param("id") int id,@Param("score") double score);
+
+    /**
+     * showAdminInfo : 查询管理员
+     * @param id : id主键
+     * @return 管理员数据
+     * */
+    Admin showAdminInfo(int id);
+
+    /**
+     * updateAdminInfo : 修改管理员
+     * @param admin : 管理员
+     * */
+    void updateAdminInfo(Admin admin);
+
+    /**
+     * adminCount : 判断用户名是否重复
+     * @param username : 用户名
+     * @return  返回重复个数
+     * */
+    int adminCount(@Param("username") String username,@Param("phone") String phone,@Param("email") String email);
+
+    /**
+     * updateAdminPassword : 修爱密码
+     * @param id : 主键
+     * @param checkPassword : 新密码
+     * */
+    void updateAdminPassword(@Param("id") int id,@Param("checkPassword") String checkPassword);
 }

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.it.pojo.*;
 import com.it.service.AdminService;
 import com.it.service.AdminServiceImpl;
+import com.it.util.Regex;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -557,8 +558,125 @@ public class AdminServlet extends MyHttpServlet {
         resp.getWriter().write(jsonString);
     }
 
+    /**
+     * 修改培训成绩的信息
+     */
+    public void updateScore(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用updateScore方法");
+        //数据处理
+        String jsonScore = req.getReader().readLine();
+        Score scoreTable = JSON.parseObject(jsonScore, Score.class);
+        double score = scoreTable.getScore();
+        int id = scoreTable.getId();
+        //数据判断
+        if (Regex.scoreCheck(score)){
+            //service
+            adminService.updateScore(id,score);
+            //响应
+            resp.getWriter().write("success");
+        }
+        else {
+            resp.getWriter().write("error");
+        }
 
+    }
 
+    /**
+     * 展示管理员的信息
+     */
+    public void showAdminInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showAdminInfo方法");
+        //数据处理
+        String parameter = req.getParameter("id");
+        int id = Integer.parseInt(parameter);
+        //service
+        Admin admin = adminService.showAdminInfo(id);
+        //响应
+        String jsonString = JSON.toJSONString(admin);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
+
+    /**
+     * 修改管理员的信息
+     */
+    public void updateAdminInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用updateAdminInfo方法");
+        //数据处理
+        String jsonAdmin = req.getReader().readLine();
+        Admin admin = JSON.parseObject(jsonAdmin, Admin.class);
+        String phone = admin.getPhone();
+        String email = admin.getEmail();
+        String username = admin.getUsername();
+        //service
+        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && !username.isEmpty()){
+            //判断用户名是否重复
+            int count = adminService.adminCount(username,phone,email);
+            if (count == 0 || count == 1){
+                adminService.updateAdminInfo(admin);
+                resp.getWriter().write("success");
+            }
+            else {
+                resp.getWriter().write("repetition");
+            }
+
+        }
+        else {
+            resp.getWriter().write("error");
+        }
+    }
+
+    /**
+     * 修改管理员密码
+     */
+    public void updateAdminPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用updateAdminPassword方法");
+        //数据处理
+        String jsonPassword = req.getReader().readLine();
+        Admin admin = JSON.parseObject(jsonPassword, Admin.class);
+        Integer id = admin.getId();
+        String password = admin.getPassword();
+        String checkPassword = admin.getCheckPassword();
+        //数据判断
+        if (password.equals(checkPassword) && !password.isEmpty()){
+            //service
+            adminService.updateAdminPassword(id,checkPassword);
+            //响应
+            resp.getWriter().write("success");
+        }
+        else {
+            resp.getWriter().write("error");
+        }
+
+    }
+
+    /**
+     * 退出登录
+     * */
+    public void adminLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用adminLogout方法");
+        // 清除认证信息,使当前会话无效
+        req.getSession().invalidate();
+        // 删除Cookie中的认证信息
+        Cookie[] cookies = req.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("authentication".equals(cookie.getName())) {
+                    // 设置Cookie的最大生存时间为0，使其立即过期
+                    cookie.setMaxAge(0);
+                    // 将修改后的Cookie添加到响应中
+                    resp.addCookie(cookie);
+                    break;
+                }
+            }
+        }
+        resp.getWriter().write("success");
+    }
 
 
 

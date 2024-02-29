@@ -827,7 +827,7 @@
                                         align="center">
                                     <!--评分-->
                                     <el-row slot-scope="scope">
-                                        <el-button type="primary" plain @click="updateScore(scope.row)">打分</el-button>
+                                        <el-button type="primary" plain @click="openScore(scope.row)">打分</el-button>
                                     </el-row>
                                 </el-table-column>
                             </el-table>
@@ -842,10 +842,80 @@
                                 :total="scorePage.tollCount">
                         </el-pagination>
                     </el-col>
+                    <!--评分-->
+                    <el-dialog title="分数" :visible.sync="scoreVisible">
+                        <el-input v-model="scoreTable.score" clearable placeholder="0-100.00"
+                                  style="width: 200px"></el-input>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="scoreVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="updateScore">确 定</el-button>
+                        </div>
+                    </el-dialog>
                 </el-row>
             </el-main>
+            <!--个人信息-->
+            <el-main v-if="adminPages[7] === true">
+                <el-row>
+                    <el-col :span="24">
+                        <div style="background: white ;height: 650px;width: 650px">
+                            <el-form ref="form" :model="adminInfo" label-width="80px"
+                                     style="color: black; font-weight: bold;">
+                                <!--头像-->
+                                <el-form-item>
+                                    <el-upload
+                                            class="avatar-uploader"
+                                            action="#"
+                                            :show-file-list="false"
+                                            :on-success="adminAvatarSuccess"
+                                            :before-upload="adminAvatarUpload">
+                                        <img :src="adminInfo.avatar" alt="Avatar" style="width: 110px; height: 110px;"/>
+                                    </el-upload>
+                                </el-form-item>
+                                <el-form-item label="用户名:">
+                                    <el-input v-model="adminInfo.username" style="width: 300px;" clearable></el-input>
+                                </el-form-item>
+                                <el-form-item label="姓名:">
+                                    <el-input v-model="adminInfo.name" style="width: 300px;" clearable></el-input>
+                                </el-form-item>
+                                <el-form-item label="电话:">
+                                    <el-input v-model="adminInfo.phone" style="width: 300px;" placeholder="注意号码格式"></el-input>
+                                </el-form-item>
+                                <el-form-item label="邮箱:">
+                                    <el-input v-model="adminInfo.email" style="width: 300px;" placeholder="注意邮箱格式"></el-input>
+                                </el-form-item>
+                                <el-form-item label="身份:">
+                                    <el-input :disabled="true" v-model="adminInfo.role" style="width: 300px;"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" @click="updateAdminInfo">保存信息</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </div>
+                    </el-col>
+                </el-row>
 
-
+            </el-main>
+            <!--修改密码-->
+            <el-main v-if="adminPages[8] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 250px; width: 500px">
+                        <el-row>
+                            <el-form :model="adminPassword" status-icon label-width="100px">
+                                <el-form-item label="新密码">
+                                    <el-input type="password" v-model="adminPassword.password" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="确认密码">
+                                    <el-input type="password" v-model="adminPassword.checkPassword" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item>
+                                    <el-button type="primary" plain @click="updateAdminPassword">提 交</el-button>
+                                    <el-button type="warning" plain native-type="reset">重 置</el-button>
+                                </el-form-item>
+                            </el-form>
+                        </el-row>
+                    </el-col>
+                </el-row>
+            </el-main>
         </el-container>
     </el-container>
 
@@ -991,11 +1061,52 @@
                     tollCount: '', //总数
                     trainName: '',//培训名称
                 }, //分页条数据
+                scoreTable:{
+                    id:'',
+                    score:'',
+                },
+                scoreVisible:false,
+                //个人信息
+                adminInfo:{
+                    id: '',
+                    username: '',
+                    password: '',
+                    name: '',
+                    avatar: '',
+                    role: '',
+                    phone: '',
+                    email: '',
+                },
+                //密码
+                adminPassword:{
+                    id:'',
+                    password:'',
+                    checkPassword:'',
+                },
+                //考勤
+                attendanceValue: [], //考勤表格
+                attendancePage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    absenceRecord: '',//考勤状态
+                }, //分页条数据
+                attendanceTable: {
+                    id: '',
+                    trainName: '',
+                    trainLocation: '',
+                    description: '',
+                    startDate: '',
+                    endDate: '',
+                },//培训表单
+                attendanceVisible: false,
+                attendanceVisible2: false,
+
+
 
                 //对话框width
                 formLabelWidth: '120px',
                 //页面渲染
-                adminPages: [false, false, false, false, false, false, false, false],
+                adminPages: [false, false, false, false, false, false, false, false,false,false],
                 //系统首页选项
                 activeIndex: '0',
                 //系统首页日期
@@ -1047,11 +1158,15 @@
             handleCommand(command) {
                 switch (command) {
                     case 'a':
+                        this.showAdminInfo();
                         break;
                     case 'b':
+                        this.adminSelect();
+                        this.showPages(8);
                         break;
                     case 'c':
                         //退出登录
+                        this.adminLogout();
                         break;
                     default:
                         alert("错误!");
@@ -1416,7 +1531,6 @@
                 this.$refs.imagePreview.open();
             }, //打开头像
             //请假
-            //请假
             showLeaves() {
                 axios({
                     method: "post",
@@ -1496,17 +1610,25 @@
                     this.showPages(6);
                 })
             },
-            updateScore(val,row){
+            openScore(row){
+                this.scoreTable.id = row.id;
+                this.scoreVisible = true;
+            },
+            updateScore(){
                 axios({
-                    method:"get",
-                    url:"http://localhost:8080/resource_app/admin/judgeQuit?value="+val+"&id="+row.id,
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/admin/updateScore",
+                    data:this.scoreTable
                 }).then((resp) =>{
                     if (resp.data === "success"){
-                        this.showQuits();
-                        this.message("审核通过",'success');
+                        this.showScores();
+                        this.message("成功评分",'success');
                     }
-                    else {
-                        this.message("审核失败",'error');
+                    else if (resp.data === "error"){
+                        this.message("请按照正确的格式",'error');
+                    }
+                    else{
+                        this.message("评分失败",'error');
                     }
                 })
 
@@ -1515,7 +1637,100 @@
                 this.scorePage.currentPage = val;//重新设置当前页码
                 this.showScores();
             },
+            //个人信息
+            showAdminInfo(){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/admin/showAdminInfo?id="+this.admin.id
+                }).then((resp) =>{
+                    //数据
+                    this.adminInfo = resp.data;
+                    this.adminSelect();
+                    this.showPages(7);
+                })
+            },
+            updateAdminInfo(){
+                this.adminInfo.id = this.admin.id;
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/admin/updateAdminInfo",
+                    data:this.adminInfo,
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        this.message("修改成功",'success');
+                    }
+                    else if(resp.data === "error"){
+                        this.message("数据格式有误",'error');
+                    }
+                    else if (resp.data ==="repetition"){
+                        this.message("数据重复",'error');
+                    }
+                    else{
+                        this.message("修改错误",'error');
+                    }
+                })
+            },
+            //修改密码
+            updateAdminPassword(){
+                this.adminPassword.id = this.admin.id;
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/admin/updateAdminPassword",
+                    data:this.adminPassword
+                }).then((resp) =>{
+                    if (resp.data === "success"){
+                        this.message("修改成功",'success');
+                    }else if (resp.data === "error"){
+                        this.message("提交数据有误",'error');
+                    }
+                    else{
+                        this.message("修改有误",'error');
+                    }
+                })
+            },
+            //退出登录
+            adminLogout(){
+                axios({
+                    method:"get",
+                    url:"http://localhost:8080/resource_app/admin/adminLogout"
+                }).then((resp) => {
+                    if (resp.data ==="success"){
+                        window.location.href = "http://localhost:8080/resource_app/login.html";
+                    }
+                })
+            },
+            //考勤
+            showAttendances() {
+                axios({
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/showAttendances",
+                    data: this.trainPage,
+                }).then((resp) => {
+                    //获取、刷新数据
+                    this.trainValue = resp.data.rows;
+                    this.trainPage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(2);
+                })
+            },
 
+
+
+            //头像上传
+            adminAvatarSuccess(res, file) {
+                this.adminInfo.avatar = URL.createObjectURL(file.raw);
+            },
+            adminAvatarUpload(file) {
+                const isJPG = file.type === 'image/jpeg';
+                const isLt2M = file.size / 1024 / 1024 < 2;
+                if (!isJPG) {
+                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                }
+                if (!isLt2M) {
+                    this.$message.error('上传头像图片大小不能超过 2MB!');
+                }
+                return isJPG && isLt2M;
+            },
             //登录成功信息展示
             showLoginMessage() {
                 // 读取本地存储中的登录成功的信息

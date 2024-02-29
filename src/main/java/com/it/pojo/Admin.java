@@ -22,6 +22,15 @@ public class Admin {
     private String role;
     private String phone;
     private String email;
+    private String checkPassword;
+
+    public String getCheckPassword() {
+        return checkPassword;
+    }
+
+    public void setCheckPassword(String checkPassword) {
+        this.checkPassword = checkPassword;
+    }
 
     public Integer getId() {
         return id;
@@ -62,7 +71,6 @@ public class Admin {
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
-
 
     public String getRole() {
         return role;
