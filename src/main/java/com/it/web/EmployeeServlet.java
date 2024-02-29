@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.it.pojo.*;
 import com.it.service.EmployeeService;
 import com.it.service.EmployeeServiceImpl;
+import com.it.util.Regex;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -95,12 +96,18 @@ public class EmployeeServlet extends MyHttpServlet {
         BufferedReader reader = req.getReader();
         String infoJson = reader.readLine();
         Employee employee = JSON.parseObject(infoJson, Employee.class);
-        employeeService.updateInfo(employee);
-        //覆盖会话
-        HttpSession session = req.getSession();
-        session.setAttribute("employee", employee);
-        //响应成功标识
-        resp.getWriter().write("success");
+        if (Regex.phoneCheck(employee.getPhone()) || Regex.emailCheck(employee.getEmail())){
+            employeeService.updateInfo(employee);
+            //覆盖会话
+            HttpSession session = req.getSession();
+            session.setAttribute("employee", employee);
+            //响应成功标识
+            resp.getWriter().write("success");
+        }
+        else {
+            resp.getWriter().write("error");
+        }
+
     }
 
     /**

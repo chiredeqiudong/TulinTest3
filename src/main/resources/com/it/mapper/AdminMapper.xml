@@ -379,27 +379,27 @@
     </update>
 
     <select id="showAttendances" resultType="com.it.pojo.Employee">
-        SELECT t2.id, t2.username, t2.name, t2.role, t2.department, curdate() As date
-        FROM tb_employee AS t2
-                 LEFT JOIN tb_attendance AS t1
-                           ON t2.id = t1.employee_id AND t1.date = CURDATE()
-                 LEFT JOIN tb_quit AS t3
-                           ON t2.id = t3.employee_id AND t3.delete_status ='在职'
-        WHERE t1.employee_id IS NULL
-          and t3.employee_id is null
-          and t2.department like #{department}
+        select id, username, name, role, department, curdate() AS date
+        from tb_employee
+        where id not in (select employee_id
+                         from tb_quit
+                         where delete_status = '离职')
+          and id not in (select employee_id
+                         from tb_attendance
+                         where date = curdate())
+          and department like #{department}
         limit #{begin},10;
     </select>
     <select id="attendanceCount" resultType="java.lang.Integer">
         SELECT count(*)
-        FROM tb_employee AS t2
-                 LEFT JOIN tb_attendance AS t1
-                           ON t2.id = t1.employee_id AND t1.date = CURDATE()
-                 LEFT JOIN tb_quit AS t3
-                           ON t2.id = t3.employee_id AND t3.delete_status ='在职'
-        WHERE t1.employee_id IS NULL
-          and t3.employee_id IS NULL
-          and t2.department like #{department};
+        from tb_employee
+        where id not in (select employee_id
+                         from tb_quit
+                         where delete_status = '离职')
+          and id not in (select employee_id
+                         from tb_attendance
+                         where date = curdate())
+          and department like #{department};
     </select>
 
 
@@ -422,7 +422,7 @@
           and employee_id not in (select employee_id
                                   from tb_quit
                                   where delete_status = '离职')
-          and department like #{department}
+          and department like #{department} and send_date = curdate()
         limit #{begin},10;
     </select>
     <select id="salariesCount" resultType="java.lang.Integer">
@@ -435,7 +435,7 @@
           and employee_id not in (select employee_id
                                   from tb_quit
                                   where delete_status = '离职')
-          and department like #{department}
+          and department like #{department} and send_date = curdate()
     </select>
 
     <update id="updateSalary">

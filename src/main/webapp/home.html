@@ -1143,6 +1143,9 @@
                         //刷新数据
                         this.employee = this.info;
                     }
+                    if (resp.data === 'error'){
+                        this.message0("数据格式有误",'error');
+                    }
                 })
 
             },
@@ -1421,6 +1424,13 @@
                 this.multipleSelection = val;
             },
             //消息提示
+            message0(message, type) {
+                this.$message({
+                    showClose: true,
+                    message: message,
+                    type: type,
+                });
+            },
             message1() {
                 this.$message({
                     showClose: true,

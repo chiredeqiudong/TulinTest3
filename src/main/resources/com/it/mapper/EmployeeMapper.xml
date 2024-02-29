@@ -215,7 +215,7 @@
     <select id="showQuit" resultMap="employeeQuit">
         select t1.id, employee_id,t2.name,t2.department,t2.role,quit_reason, quit_status
         from tb_quit as t1 join tb_employee as t2
-        on t1.employee_id = t2.id
+        on t1.employee_id = #{employeeId}
         <where>
             <if test="employeeId != null">
                 and quit_status != '同意'
