@@ -4,7 +4,6 @@ package com.it.service;
 import com.it.pojo.*;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
 
 /**
  * @author zy293
@@ -216,6 +215,36 @@ public interface AdminService {
      * @param checkPassword : 新密码
      * */
     void updateAdminPassword(int id,String checkPassword);
+
+    /**
+     * showAttendances : 考勤设置
+     * @param page : 查询条件
+     * @return 员工数据
+     * */
+    PageBean<Employee> showAttendances(Page page);
+
+    /**
+     * attendanceJudge : 考勤设置
+     * @param attendancesId: 员工id
+     * @param absenceRecord : 状态
+     * @param name : 姓名
+     * */
+    void attendanceJudge(int[] attendancesId,String absenceRecord,String name);
+
+    /**
+     * showSalaries : 薪资处罚
+     * @param page : 查询条件
+     * @return 薪资数据
+     * */
+    PageBean<Salary> showSalaries(Page page);
+
+    /**
+     * updateSalary:修改工资
+     * @param id：主键
+     * @param  money：工资
+     */
+    void updateSalary(int id,double money);
+
 
 
 

@@ -98,6 +98,7 @@
                             <el-menu-item index="2-2">离职审批</el-menu-item>
                             <el-menu-item index="2-3">考勤处理</el-menu-item>
                             <el-menu-item index="2-4">培训成绩</el-menu-item>
+                            <el-menu-item index="2-5">薪资处罚</el-menu-item>
                         </el-menu-item-group>
                     </el-submenu>
                     <el-submenu index="3">
@@ -680,8 +681,12 @@
                                         align="center">
                                     <!--请假批准-->
                                     <el-row slot-scope="scope">
-                                        <el-button type="primary" plain size="small" @click="judgeLeave(0,scope.row)">批准</el-button>
-                                        <el-button type="danger" plain size="small" @click="judgeLeave(1,scope.row)">驳回</el-button>
+                                        <el-button type="primary" plain size="small" @click="judgeLeave(0,scope.row)">
+                                            批准
+                                        </el-button>
+                                        <el-button type="danger" plain size="small" @click="judgeLeave(1,scope.row)">
+                                            驳回
+                                        </el-button>
                                     </el-row>
                                 </el-table-column>
                             </el-table>
@@ -754,8 +759,12 @@
                                         align="center">
                                     <!--离职批准-->
                                     <el-row slot-scope="scope">
-                                        <el-button type="primary" plain size="small" @click="judgeQuit(0,scope.row)">批准</el-button>
-                                        <el-button type="danger" plain size="small" @click="judgeQuit(1,scope.row)">驳回</el-button>
+                                        <el-button type="primary" plain size="small" @click="judgeQuit(0,scope.row)">
+                                            批准
+                                        </el-button>
+                                        <el-button type="danger" plain size="small" @click="judgeQuit(1,scope.row)">
+                                            驳回
+                                        </el-button>
                                     </el-row>
                                 </el-table-column>
                             </el-table>
@@ -878,13 +887,16 @@
                                     <el-input v-model="adminInfo.name" style="width: 300px;" clearable></el-input>
                                 </el-form-item>
                                 <el-form-item label="电话:">
-                                    <el-input v-model="adminInfo.phone" style="width: 300px;" placeholder="注意号码格式"></el-input>
+                                    <el-input v-model="adminInfo.phone" style="width: 300px;"
+                                              placeholder="注意号码格式"></el-input>
                                 </el-form-item>
                                 <el-form-item label="邮箱:">
-                                    <el-input v-model="adminInfo.email" style="width: 300px;" placeholder="注意邮箱格式"></el-input>
+                                    <el-input v-model="adminInfo.email" style="width: 300px;"
+                                              placeholder="注意邮箱格式"></el-input>
                                 </el-form-item>
                                 <el-form-item label="身份:">
-                                    <el-input :disabled="true" v-model="adminInfo.role" style="width: 300px;"></el-input>
+                                    <el-input :disabled="true" v-model="adminInfo.role"
+                                              style="width: 300px;"></el-input>
                                 </el-form-item>
                                 <el-form-item>
                                     <el-button type="primary" @click="updateAdminInfo">保存信息</el-button>
@@ -902,10 +914,12 @@
                         <el-row>
                             <el-form :model="adminPassword" status-icon label-width="100px">
                                 <el-form-item label="新密码">
-                                    <el-input type="password" v-model="adminPassword.password" autocomplete="off"></el-input>
+                                    <el-input type="password" v-model="adminPassword.password"
+                                              autocomplete="off"></el-input>
                                 </el-form-item>
                                 <el-form-item label="确认密码">
-                                    <el-input type="password" v-model="adminPassword.checkPassword" autocomplete="off"></el-input>
+                                    <el-input type="password" v-model="adminPassword.checkPassword"
+                                              autocomplete="off"></el-input>
                                 </el-form-item>
                                 <el-form-item>
                                     <el-button type="primary" plain @click="updateAdminPassword">提 交</el-button>
@@ -916,6 +930,157 @@
                     </el-col>
                 </el-row>
             </el-main>
+            <!--考勤设置-->
+            <el-main v-if="adminPages[9] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-select v-model="attendancePage.department" style="width: 200px" placeholder="请选择部门">
+                            <el-option label="所有部门" value=""></el-option>
+                            <el-option label="后勤部" value="后勤部"></el-option>
+                            <el-option label="财务部" value="财务部"></el-option>
+                            <el-option label="科技部" value="科技部"></el-option>
+                            <el-option label="人事部" value="人事部"></el-option>
+                            <el-option label="人力资源部" value="人力资源部"></el-option>
+                        </el-select>
+                        <el-button type="primary" plain @click="showAttendances">查 找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-button type="success" plain @click="attendanceJudge(0)">全勤</el-button>
+                        <el-button type="info" plain @click="attendanceJudge(1)">迟到</el-button>
+                        <el-button type="warning" plain @click="attendanceJudge(2)">早退</el-button>
+                        <el-button type="danger" plain @click="attendanceJudge(3)">缺勤</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="attendanceValue"
+                                    style="width: 100%"
+                                    @selection-change="attendanceSelectionChange">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        type="selection"
+                                        width="55">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="用户名"
+                                        prop="username"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="身份"
+                                        prop="role"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="日期"
+                                        prop="date"
+                                        align="center">
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="attendancePage.currentPage"
+                                @current-change="attendanceCurrentChange"
+                                :total="attendancePage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+            <!--薪资处罚-->
+            <el-main v-if="adminPages[10] === true">
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;">
+                        <el-input v-model="salaryPage.department" clearable placeholder="请输入部门名称"
+                                  style="width: 200px"></el-input>
+                        <el-button type="primary" plain @click="showSalaries">查 找</el-button>
+                    </el-col>
+                </el-row>
+                <hr>
+                <el-row>
+                    <el-col :span="24" style="background: white ;height: 50px;width: 100%">
+                        <template>
+                            <el-table
+                                    :data="salaryValue"
+                                    style="width: 100%">
+                                <el-table-column
+                                        prop="id"
+                                        v-if="false">
+                                </el-table-column>
+                                <el-table-column
+                                        label="序号"
+                                        type="index"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="姓名"
+                                        prop="name"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="部门"
+                                        prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="薪资"
+                                        prop="money"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="日期"
+                                        prop="date"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="处罚"
+                                        align="center">
+                                    <el-row slot-scope="scope">
+                                        <el-button type="primary" plain @click="updateSalary(scope.row)">扣费</el-button>
+                                    </el-row>
+                                </el-table-column>
+                            </el-table>
+                        </template>
+                        <!--分页条-->
+                        <el-pagination
+                                background
+                                layout="total,prev, pager, next"
+                                :page-size="10"
+                                :current-page="salaryPage.currentPage"
+                                @current-change="salaryCurrentChange"
+                                :total="salaryPage.tollCount">
+                        </el-pagination>
+                    </el-col>
+                </el-row>
+            </el-main>
+
         </el-container>
     </el-container>
 
@@ -1061,13 +1226,13 @@
                     tollCount: '', //总数
                     trainName: '',//培训名称
                 }, //分页条数据
-                scoreTable:{
-                    id:'',
-                    score:'',
+                scoreTable: {
+                    id: '',
+                    score: '',
                 },
-                scoreVisible:false,
+                scoreVisible: false,
                 //个人信息
-                adminInfo:{
+                adminInfo: {
                     id: '',
                     username: '',
                     password: '',
@@ -1078,35 +1243,33 @@
                     email: '',
                 },
                 //密码
-                adminPassword:{
-                    id:'',
-                    password:'',
-                    checkPassword:'',
+                adminPassword: {
+                    id: '',
+                    password: '',
+                    checkPassword: '',
                 },
                 //考勤
                 attendanceValue: [], //考勤表格
                 attendancePage: {
                     currentPage: '1', //当前页
                     tollCount: '', //总数
-                    absenceRecord: '',//考勤状态
+                    department: '', //部门
                 }, //分页条数据
-                attendanceTable: {
-                    id: '',
-                    trainName: '',
-                    trainLocation: '',
-                    description: '',
-                    startDate: '',
-                    endDate: '',
-                },//培训表单
-                attendanceVisible: false,
-                attendanceVisible2: false,
-
-
+                attendanceSelection: [],//复选框数据
+                attendanceBox:[],
+                attendanceName:'',//姓名
+                //薪资
+                salaryValue: [], //薪资表格
+                salaryPage: {
+                    currentPage: '1', //当前页
+                    tollCount: '', //总数
+                    departmentL:'',
+                }, //分页条数据
 
                 //对话框width
                 formLabelWidth: '120px',
                 //页面渲染
-                adminPages: [false, false, false, false, false, false, false, false,false,false],
+                adminPages: [false, false, false, false, false, false, false, false, false, false,false],
                 //系统首页选项
                 activeIndex: '0',
                 //系统首页日期
@@ -1141,8 +1304,14 @@
                     case '2-2':
                         this.showQuits();
                         break;
+                    case '2-3':
+                        this.showAttendances();
+                        break;
                     case '2-4':
                         this.showScores();
+                        break;
+                    case '2-5':
+                        this.showSalaries();
                         break;
                     case '3-1':
                         this.showAnnounce();
@@ -1453,16 +1622,14 @@
             selectEmployeeByData(index) {
                 axios({
                     method: "post",
-                    url: "http://localhost:8080/resource_app/admin/selectEmployeeByData?index="+index,
+                    url: "http://localhost:8080/resource_app/admin/selectEmployeeByData?index=" + index,
                     data: this.employeeTable,
                 }).then((resp) => {
                     if (resp.data === "add") {
                         this.addEmployee();
-                    }
-                    else if (resp.data === "update"){
+                    } else if (resp.data === "update") {
                         this.updateEmployee();
-                    }
-                    else {
+                    } else {
                         this.employeeVisible = false;
                         this.message("用户名or电话or邮箱已存在", 'error');
                     }
@@ -1544,17 +1711,16 @@
                     this.showPages(4);
                 })
             },
-            judgeLeave(val,row){
+            judgeLeave(val, row) {
                 axios({
-                    method:"get",
-                    url:"http://localhost:8080/resource_app/admin/judgeLeave?value="+val+"&id="+row.id,
-                }).then((resp) =>{
-                    if (resp.data === "success"){
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/judgeLeave?value=" + val + "&id=" + row.id,
+                }).then((resp) => {
+                    if (resp.data === "success") {
                         this.showLeaves();
-                        this.message("审核通过",'success');
-                    }
-                    else {
-                        this.message("审核失败",'error');
+                        this.message("审核通过", 'success');
+                    } else {
+                        this.message("审核失败", 'error');
                     }
                 })
 
@@ -1577,17 +1743,16 @@
                     this.showPages(5);
                 })
             },
-            judgeQuit(val,row){
+            judgeQuit(val, row) {
                 axios({
-                    method:"get",
-                    url:"http://localhost:8080/resource_app/admin/judgeQuit?value="+val+"&id="+row.id,
-                }).then((resp) =>{
-                    if (resp.data === "success"){
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/judgeQuit?value=" + val + "&id=" + row.id,
+                }).then((resp) => {
+                    if (resp.data === "success") {
                         this.showQuits();
-                        this.message("审核通过",'success');
-                    }
-                    else {
-                        this.message("审核失败",'error');
+                        this.message("审核通过", 'success');
+                    } else {
+                        this.message("审核失败", 'error');
                     }
                 })
 
@@ -1610,25 +1775,23 @@
                     this.showPages(6);
                 })
             },
-            openScore(row){
+            openScore(row) {
                 this.scoreTable.id = row.id;
                 this.scoreVisible = true;
             },
-            updateScore(){
+            updateScore() {
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/resource_app/admin/updateScore",
-                    data:this.scoreTable
-                }).then((resp) =>{
-                    if (resp.data === "success"){
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/updateScore",
+                    data: this.scoreTable
+                }).then((resp) => {
+                    if (resp.data === "success") {
                         this.showScores();
-                        this.message("成功评分",'success');
-                    }
-                    else if (resp.data === "error"){
-                        this.message("请按照正确的格式",'error');
-                    }
-                    else{
-                        this.message("评分失败",'error');
+                        this.message("成功评分", 'success');
+                    } else if (resp.data === "error") {
+                        this.message("请按照正确的格式", 'error');
+                    } else {
+                        this.message("评分失败", 'error');
                     }
                 })
 
@@ -1638,83 +1801,142 @@
                 this.showScores();
             },
             //个人信息
-            showAdminInfo(){
+            showAdminInfo() {
                 axios({
-                    method:"get",
-                    url:"http://localhost:8080/resource_app/admin/showAdminInfo?id="+this.admin.id
-                }).then((resp) =>{
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/showAdminInfo?id=" + this.admin.id
+                }).then((resp) => {
                     //数据
                     this.adminInfo = resp.data;
                     this.adminSelect();
                     this.showPages(7);
                 })
             },
-            updateAdminInfo(){
+            updateAdminInfo() {
                 this.adminInfo.id = this.admin.id;
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/resource_app/admin/updateAdminInfo",
-                    data:this.adminInfo,
-                }).then((resp) =>{
-                    if (resp.data === "success"){
-                        this.message("修改成功",'success');
-                    }
-                    else if(resp.data === "error"){
-                        this.message("数据格式有误",'error');
-                    }
-                    else if (resp.data ==="repetition"){
-                        this.message("数据重复",'error');
-                    }
-                    else{
-                        this.message("修改错误",'error');
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/updateAdminInfo",
+                    data: this.adminInfo,
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        this.message("修改成功", 'success');
+                    } else if (resp.data === "error") {
+                        this.message("数据格式有误", 'error');
+                    } else if (resp.data === "repetition") {
+                        this.message("数据重复", 'error');
+                    } else {
+                        this.message("修改错误", 'error');
                     }
                 })
             },
             //修改密码
-            updateAdminPassword(){
+            updateAdminPassword() {
                 this.adminPassword.id = this.admin.id;
                 axios({
-                    method:"post",
-                    url:"http://localhost:8080/resource_app/admin/updateAdminPassword",
-                    data:this.adminPassword
-                }).then((resp) =>{
-                    if (resp.data === "success"){
-                        this.message("修改成功",'success');
-                    }else if (resp.data === "error"){
-                        this.message("提交数据有误",'error');
-                    }
-                    else{
-                        this.message("修改有误",'error');
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/updateAdminPassword",
+                    data: this.adminPassword
+                }).then((resp) => {
+                    if (resp.data === "success") {
+                        this.message("修改成功", 'success');
+                    } else if (resp.data === "error") {
+                        this.message("提交数据有误", 'error');
+                    } else {
+                        this.message("修改有误", 'error');
                     }
                 })
             },
             //退出登录
-            adminLogout(){
+            adminLogout() {
                 axios({
-                    method:"get",
-                    url:"http://localhost:8080/resource_app/admin/adminLogout"
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/adminLogout"
                 }).then((resp) => {
-                    if (resp.data ==="success"){
+                    if (resp.data === "success") {
                         window.location.href = "http://localhost:8080/resource_app/login.html";
                     }
                 })
             },
-            //考勤
+            //考勤设置
             showAttendances() {
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/admin/showAttendances",
-                    data: this.trainPage,
+                    data: this.attendancePage,
                 }).then((resp) => {
                     //获取、刷新数据
-                    this.trainValue = resp.data.rows;
-                    this.trainPage.tollCount = resp.data.tollCount;
+                    this.attendanceValue = resp.data.rows;
+                    this.attendancePage.tollCount = resp.data.tollCount;
                     this.adminSelect();
-                    this.showPages(2);
+                    this.showPages(9);
                 })
             },
-
-
+            attendanceJudge(value){
+                //获取所选框id主键
+                for (let i = 0; i < this.attendanceSelection.length; i++) {
+                    let attendanceTable = this.attendanceSelection[i];
+                    this.attendanceBox[i] = attendanceTable.id;
+                    this.attendanceName = attendanceTable.name;
+                }
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/admin/attendanceJudge?value="+value+"&name="+this.attendanceName,
+                    data:this.attendanceBox,
+                }).then((resp) =>{
+                    if(resp.data === "success"){
+                        this.showAttendances();
+                        this.message("处理成功",'success');
+                    }else if (resp === "error"){
+                        this.message("程序有误",'error');
+                    }
+                    else  if (resp.data === "length"){
+                        this.message("请勾选员工",'error');
+                    }
+                })
+            },
+            attendanceSelectionChange(val) {
+                this.attendanceSelection = val;
+            },
+            attendanceCurrentChange(val) {
+                this.attendancePage.currentPage = val;//重新设置当前页码
+                this.showAttendances();
+            },
+            //薪资处罚
+            showSalaries() {
+                //在职员工,考勤信息,编辑薪资信息
+                axios({
+                    method:"post",
+                    url:"http://localhost:8080/resource_app/admin/showSalaries",
+                    data:this.salaryPage
+                }).then((resp) =>{
+                    //获取、刷新数据
+                    this.salaryValue = resp.data.rows;
+                    this.salaryPage.tollCount = resp.data.tollCount;
+                    this.adminSelect();
+                    this.showPages(10);
+                })
+            },
+            salaryCurrentChange(val) {
+                this.salaryPage.currentPage = val;//重新设置当前页码
+                this.showSalaries();
+            },
+            updateSalary(row){ //薪资处罚,
+                axios({
+                    method: "get",
+                    url: "http://localhost:8080/resource_app/admin/updateSalary?id="+row.id+"&money="+row.money,
+                }).then((resp) => {
+                    if (resp.data === "success"){
+                        this.showSalaries();
+                        this.message("处罚成功-100元",'success');
+                    }
+                    else if(resp.data === "error"){
+                        this.message("达到处罚上限",'error');
+                    }else{
+                        this.message("程序有误",'error');
+                    }
+                })
+            },
 
             //头像上传
             adminAvatarSuccess(res, file) {
@@ -1737,7 +1959,7 @@
                 const loginSuccess = localStorage.getItem('loginAdminSuccess');
                 if (loginSuccess === 'true') {
                     //消息
-                    this.message("登录成功",'success');
+                    this.message("登录成功", 'success');
                     // 清除本地存储中的登录成功的信息
                     localStorage.removeItem('loginSuccess');
                 }

@@ -1,4 +1,7 @@
 package com.it.pojo;
+
+import java.sql.Date;
+
 /**
  * @author zy293
  * Employee:员工表数据
@@ -24,6 +27,24 @@ public class Employee {
     private String phone;
     private String email;
     private String department;
+    private String deleteStatus;
+    private Date date;
+
+    public String getDeleteStatus() {
+        return deleteStatus;
+    }
+
+    public void setDeleteStatus(String deleteStatus) {
+        this.deleteStatus = deleteStatus;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public Integer getId() {
         return id;

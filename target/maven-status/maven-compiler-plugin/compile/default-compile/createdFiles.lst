@@ -5,6 +5,7 @@ com\it\pojo\Train.class
 com\it\mapper\EmployeeMapper.class
 com\it\service\AdminServiceImpl.class
 com\it\web\MyHttpServlet.class
+com\it\util\Regex.class
 com\it\service\EmployeeServiceImpl.class
 com\it\pojo\Page.class
 com\it\pojo\Admin.class

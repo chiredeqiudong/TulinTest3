@@ -58,7 +58,10 @@
                email,
                department
         from tb_employee
-        where username = #{username}
+        where id NOT IN (select employee_id
+                         from tb_quit
+                         where delete_status = '离职')
+          and username = #{username}
           and password = #{password};
     </select>
     <update id="updateInfo">

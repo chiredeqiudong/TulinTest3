@@ -541,6 +541,90 @@ public class AdminServiceImpl implements AdminService{
     }
 
     /**
+     * showAttendances : 考勤设置
+     * @param page : 查询条件
+     * @return 员工数据
+     */
+    @Override
+    public PageBean<Employee> showAttendances(Page page) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        int begin = (page.getCurrentPage() - 1) * 10;
+        String department = page.getDepartment();
+        if (department != null && !department.isEmpty()) {
+            department  =  "%" +department+ "%";
+        }else {
+            department = "%";
+        }
+        //mapper
+        List<Employee> attendanceList = mapper.showAttendances(begin,department);
+        int attendancesCount = mapper.attendanceCount(begin, department);
+        PageBean<Employee> attendancePageBean = new PageBean<>();
+        attendancePageBean.setTollCount(attendancesCount);
+        attendancePageBean.setRows(attendanceList);
+        sqlSession.close();
+        return attendancePageBean;
+    }
+
+    /**
+     * attendanceJudge : 考勤设置
+     * @param attendancesId : 员工id
+     * @param absenceRecord : 状态
+     */
+    @Override
+    public void attendanceJudge(int[] attendancesId, String absenceRecord,String name) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        //循环添加
+        for (int id : attendancesId) {
+            mapper.attendanceJudge(id, absenceRecord,name);
+            sqlSession.commit();
+        }
+        sqlSession.close();
+    }
+
+    /**
+     * showSalaries : 薪资处罚
+     * @param page : 查询条件
+     * @return 薪资数据
+     */
+    @Override
+    public PageBean<Salary> showSalaries(Page page) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        int begin = (page.getCurrentPage() - 1) * 10;
+        String department = page.getDepartment();
+        if (department != null && !department.isEmpty()) {
+            department  =  "%" +department+ "%";
+        }else {
+            department = "%";
+        }
+        //mapper
+        List<Salary> salaryList = mapper.showSalaries(begin,department);
+        int salariesCount = mapper.salariesCount(begin, department);
+        PageBean<Salary> salaryPageBean = new PageBean<>();
+        salaryPageBean.setTollCount(salariesCount);
+        salaryPageBean.setRows(salaryList);
+        sqlSession.close();
+        return salaryPageBean;
+    }
+
+    /**
+     * updateSalary:修改工资
+     * @param id    ：主键
+     * @param money ：工资
+     */
+    @Override
+    public void updateSalary(int id, double money) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        money -=100;
+        mapper.updateSalary(id,money);
+        sqlSession.commit();
+        sqlSession.close();
+    }
+
+    /**
      * adminSelect:管理员数据
      * @param adminId : 管理员id
      * @return : 管理员

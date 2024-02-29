@@ -1,5 +1,7 @@
 package com.it.pojo;
 
+import java.sql.Date;
+
 /**
  * @author zy293
  * Salary:薪水表
@@ -20,6 +22,15 @@ public class Salary {
     private double baseSalary;
     private double attendanceBonus;
     private double performancePay;
+    private Date date;
+
+    public Date getDate() {
+        return date;
+    }
+
+    public void setDate(Date date) {
+        this.date = date;
+    }
 
     public Integer getId() {
         return id;

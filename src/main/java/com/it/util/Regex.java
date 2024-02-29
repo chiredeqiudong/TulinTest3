@@ -40,7 +40,6 @@ public class Regex {
         if (Objects.isNull(phone) || phone.isEmpty()){
             return false;
         }
-
         String regex ="1[3-9]\\d{9}";
         return phone.matches(regex);
 

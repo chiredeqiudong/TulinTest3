@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 /**
@@ -126,16 +127,15 @@ public class AdminServlet extends MyHttpServlet {
         //json
         String jsonAnnounce = req.getReader().readLine();
         Announcement announcement = JSON.parseObject(jsonAnnounce, Announcement.class);
-        if (announcement.getWriter().isEmpty() || announcement.getContent().isEmpty() || announcement.getTitle().isEmpty()){
+        if (announcement.getWriter().isEmpty() || announcement.getContent().isEmpty() || announcement.getTitle().isEmpty()) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.addAnnounce(announcement);
             resp.getWriter().write("success");
         }
 
-}
+    }
 
     /**
      * 删除公告
@@ -178,10 +178,9 @@ public class AdminServlet extends MyHttpServlet {
         String jsonAnnounce = req.getReader().readLine();
         Announcement announcement = JSON.parseObject(jsonAnnounce, Announcement.class);
         //service
-        if (announcement.getWriter().isEmpty() || announcement.getContent().isEmpty() || announcement.getTitle().isEmpty()){
+        if (announcement.getWriter().isEmpty() || announcement.getContent().isEmpty() || announcement.getTitle().isEmpty()) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.updateAnnounce(announcement);
             resp.getWriter().write("success");
@@ -197,10 +196,9 @@ public class AdminServlet extends MyHttpServlet {
         //主键数组
         String jsonAnnounces = req.getReader().readLine();
         int[] announcesId = JSON.parseObject(jsonAnnounces, int[].class);
-        if (announcesId.length == 0){
+        if (announcesId.length == 0) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.deleteAnnounces(announcesId);
             resp.getWriter().write("success");
@@ -234,10 +232,9 @@ public class AdminServlet extends MyHttpServlet {
         //json
         String jsonTrain = req.getReader().readLine();
         Train train = JSON.parseObject(jsonTrain, Train.class);
-        if ( train.getTrainName().isEmpty() || train.getTrainLocation().isEmpty() || train.getStartDate() == null || train.getEndDate() == null){
+        if (train.getTrainName().isEmpty() || train.getTrainLocation().isEmpty() || train.getStartDate() == null || train.getEndDate() == null) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.addTrain(train);
             resp.getWriter().write("success");
@@ -284,12 +281,11 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用updateTrain方法");
         //json
         String jsonTrain = req.getReader().readLine();
-        Train train = JSON.parseObject(jsonTrain,Train.class);
+        Train train = JSON.parseObject(jsonTrain, Train.class);
         //service
-        if ( train.getTrainName().isEmpty() || train.getTrainLocation().isEmpty() || train.getStartDate() == null || train.getEndDate() == null){
+        if (train.getTrainName().isEmpty() || train.getTrainLocation().isEmpty() || train.getStartDate() == null || train.getEndDate() == null) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.updateTrain(train);
             resp.getWriter().write("success");
@@ -305,10 +301,9 @@ public class AdminServlet extends MyHttpServlet {
         //主键数组
         String jsonTrains = req.getReader().readLine();
         int[] trainsId = JSON.parseObject(jsonTrains, int[].class);
-        if (trainsId.length == 0){
+        if (trainsId.length == 0) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.deleteTrains(trainsId);
             resp.getWriter().write("success");
@@ -324,18 +319,17 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用showEmployees方法");
         //数据处理
         String jsonEmployee = req.getReader().readLine();
-        Page page = JSON.parseObject(jsonEmployee,Page.class);
+        Page page = JSON.parseObject(jsonEmployee, Page.class);
         String index = req.getParameter("index");
         int id = Integer.parseInt(index);
         //service
-        if (id == 0){
+        if (id == 0) {
             PageBean<Employee> employeePageBean = adminService.showEmployees2(page);
             //响应
             String jsonString = JSON.toJSONString(employeePageBean);
             resp.setContentType("text/json;charset=utf-8");
             resp.getWriter().write(jsonString);
-        }
-        else {
+        } else {
             //默认模糊
             PageBean<Employee> employeePageBean = adminService.showEmployees(page);
             //响应
@@ -362,19 +356,17 @@ public class AdminServlet extends MyHttpServlet {
         //没有重复的数据
         boolean flag = count == 0;
         //service
-        if (parseInt == 0 ){
-            if (flag){
+        if (parseInt == 0) {
+            if (flag) {
                 resp.getWriter().write("add");
-            }
-            else {
+            } else {
                 resp.getWriter().write("error");
             }
         }
-        if (parseInt == 1){
-            if (flag){
+        if (parseInt == 1) {
+            if (flag) {
                 resp.getWriter().write("update");
-            }
-            else {
+            } else {
                 resp.getWriter().write("error");
             }
         }
@@ -389,10 +381,9 @@ public class AdminServlet extends MyHttpServlet {
         //json
         String jsonTrain = req.getReader().readLine();
         Employee employee = JSON.parseObject(jsonTrain, Employee.class);
-        if ( employee.getUsername().isEmpty() || employee.getName().isEmpty()){
+        if (employee.getUsername().isEmpty() || employee.getName().isEmpty()) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             employee.setPassword("123456");
             adminService.addEmployee(employee);
@@ -426,12 +417,11 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用updateEmployee方法");
         //json
         String jsonEmployee = req.getReader().readLine();
-        Employee employee = JSON.parseObject(jsonEmployee,Employee.class);
+        Employee employee = JSON.parseObject(jsonEmployee, Employee.class);
         //service
-        if ( employee.getUsername().isEmpty() || employee.getName().isEmpty()){
+        if (employee.getUsername().isEmpty() || employee.getName().isEmpty()) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.updateEmployee(employee);
             resp.getWriter().write("success");
@@ -447,10 +437,9 @@ public class AdminServlet extends MyHttpServlet {
         //主键数组
         String jsonEmployees = req.getReader().readLine();
         int[] employeesId = JSON.parseObject(jsonEmployees, int[].class);
-        if (employeesId.length == 0){
+        if (employeesId.length == 0) {
             resp.getWriter().write("error");
-        }
-        else {
+        } else {
             //service
             adminService.deleteEmployees(employeesId);
             resp.getWriter().write("success");
@@ -466,7 +455,7 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用showLeaves方法");
         //数据处理
         String jsonLeaves = req.getReader().readLine();
-        Page page = JSON.parseObject(jsonLeaves,Page.class);
+        Page page = JSON.parseObject(jsonLeaves, Page.class);
         //service
         PageBean<Leave> leavePageBean = adminService.showLeaves(page);
         //响应
@@ -478,7 +467,7 @@ public class AdminServlet extends MyHttpServlet {
 
     /**
      * 请假审核
-     * */
+     */
     public void judgeLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //测试是否调用该方法
         System.out.println("调用judgeLeave方法");
@@ -488,12 +477,12 @@ public class AdminServlet extends MyHttpServlet {
         int value = Integer.parseInt(parameter1);
         int id = Integer.parseInt(parameter2);
         String leaveStatus = "驳回";
-        if (value == 0){
+        if (value == 0) {
             //批准
             leaveStatus = "已批准";
         }
         //service
-        adminService.judgeLeave(id,leaveStatus);
+        adminService.judgeLeave(id, leaveStatus);
         //响应
         resp.getWriter().write("success");
 
@@ -507,7 +496,7 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用showQuits方法");
         //数据处理
         String jsonQuits = req.getReader().readLine();
-        Page page = JSON.parseObject(jsonQuits,Page.class);
+        Page page = JSON.parseObject(jsonQuits, Page.class);
         //service
         PageBean<Quit> quitPageBean = adminService.showQuits(page);
         //响应
@@ -518,7 +507,7 @@ public class AdminServlet extends MyHttpServlet {
 
     /**
      * 离职审核
-     * */
+     */
     public void judgeQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //测试是否调用该方法
         System.out.println("调用judgeQuit方法");
@@ -529,13 +518,13 @@ public class AdminServlet extends MyHttpServlet {
         int id = Integer.parseInt(parameter2);
         String quitStatus = "驳回";
         String deleteStatus = "在职";
-        if (value == 0){
+        if (value == 0) {
             //离职
             quitStatus = "已批准";
             deleteStatus = "离职";
         }
         //service
-        adminService.judgeQuit(id,quitStatus,deleteStatus);
+        adminService.judgeQuit(id, quitStatus, deleteStatus);
         //响应
         resp.getWriter().write("success");
 
@@ -549,7 +538,7 @@ public class AdminServlet extends MyHttpServlet {
         System.out.println("调用showScores方法");
         //数据处理
         String jsonScores = req.getReader().readLine();
-        Page page = JSON.parseObject(jsonScores,Page.class);
+        Page page = JSON.parseObject(jsonScores, Page.class);
         //service
         PageBean<Score> scorePageBean = adminService.showScores(page);
         //响应
@@ -570,13 +559,12 @@ public class AdminServlet extends MyHttpServlet {
         double score = scoreTable.getScore();
         int id = scoreTable.getId();
         //数据判断
-        if (Regex.scoreCheck(score)){
+        if (Regex.scoreCheck(score)) {
             //service
-            adminService.updateScore(id,score);
+            adminService.updateScore(id, score);
             //响应
             resp.getWriter().write("success");
-        }
-        else {
+        } else {
             resp.getWriter().write("error");
         }
 
@@ -612,19 +600,17 @@ public class AdminServlet extends MyHttpServlet {
         String email = admin.getEmail();
         String username = admin.getUsername();
         //service
-        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && !username.isEmpty()){
+        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && !username.isEmpty()) {
             //判断用户名是否重复
-            int count = adminService.adminCount(username,phone,email);
-            if (count == 0 || count == 1){
+            int count = adminService.adminCount(username, phone, email);
+            if (count == 0 || count == 1) {
                 adminService.updateAdminInfo(admin);
                 resp.getWriter().write("success");
-            }
-            else {
+            } else {
                 resp.getWriter().write("repetition");
             }
 
-        }
-        else {
+        } else {
             resp.getWriter().write("error");
         }
     }
@@ -642,13 +628,12 @@ public class AdminServlet extends MyHttpServlet {
         String password = admin.getPassword();
         String checkPassword = admin.getCheckPassword();
         //数据判断
-        if (password.equals(checkPassword) && !password.isEmpty()){
+        if (password.equals(checkPassword) && !password.isEmpty()) {
             //service
-            adminService.updateAdminPassword(id,checkPassword);
+            adminService.updateAdminPassword(id, checkPassword);
             //响应
             resp.getWriter().write("success");
-        }
-        else {
+        } else {
             resp.getWriter().write("error");
         }
 
@@ -656,7 +641,7 @@ public class AdminServlet extends MyHttpServlet {
 
     /**
      * 退出登录
-     * */
+     */
     public void adminLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         //测试是否调用该方法
         System.out.println("调用adminLogout方法");
@@ -678,9 +663,94 @@ public class AdminServlet extends MyHttpServlet {
         resp.getWriter().write("success");
     }
 
+    /**
+     * 考勤展示
+     */
+    public void showAttendances(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showAttendances方法");
+        //数据处理
+        String jsonAttendances = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonAttendances, Page.class);
+        //service
+        PageBean<Employee> employeePageBean = adminService.showAttendances(page);
+        //响应
+        String jsonString = JSON.toJSONString(employeePageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
+
+    /**
+     * 考勤设置
+     */
+    public void attendanceJudge(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用attendanceJudge方法");
+        //数据处理
+        String parameter = req.getParameter("value");
+        String name = req.getParameter("name");
+        int value = Integer.parseInt(parameter);
+        byte[] nameBytes = name.getBytes(StandardCharsets.ISO_8859_1);
+        String attendanceName = new String(nameBytes,StandardCharsets.UTF_8);
+        String absenceRecord = "";
+        switch (value) {
+            case 0 -> absenceRecord = "全勤";
+            case 1 -> absenceRecord = "迟到";
+            case 2 -> absenceRecord = "早退";
+            case 3 -> absenceRecord = "缺勤";
+            default -> resp.getWriter().write("error");
+        }
+        String jsonAttendances = req.getReader().readLine();
+        int[] attendancesId = JSON.parseObject(jsonAttendances, int[].class);
+        if (attendancesId.length == 0) {
+            resp.getWriter().write("length");
+        } else {
+            //service
+            adminService.attendanceJudge(attendancesId, absenceRecord,attendanceName);
+            //响应
+            resp.getWriter().write("success");
+        }
+
+    }
 
 
+    /**
+     * 薪资处罚
+     */
+    public void showSalaries(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用showSalaries方法");
+        //数据处理
+        String jsonAttendances = req.getReader().readLine();
+        Page page = JSON.parseObject(jsonAttendances, Page.class);
+        //service
+        PageBean<Salary> salaryPageBean = adminService.showSalaries(page);
+        //响应
+        String jsonString = JSON.toJSONString(salaryPageBean);
+        resp.setContentType("text/json;charset=utf-8");
+        resp.getWriter().write(jsonString);
+    }
 
-
-
+    /**
+     * 薪资处罚
+     */
+    public void updateSalary(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        //测试是否调用该方法
+        System.out.println("调用updateSalary方法");
+        //数据处理
+        String parameter1 = req.getParameter("id");
+        int id = Integer.parseInt(parameter1);
+        String parameter2 = req.getParameter("money");
+        double money = Double.parseDouble(parameter2);
+        //service
+        double basicMoney = 3100.0;
+        if (money < basicMoney){
+            resp.getWriter().write("error");
+        }
+        else {
+            adminService.updateSalary(id,money);
+            resp.getWriter().write("success");
+        }
+    }
 }
+

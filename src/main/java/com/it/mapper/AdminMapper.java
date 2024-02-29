@@ -276,6 +276,8 @@ public interface AdminMapper {
     /**
      * adminCount : 判断用户名是否重复
      * @param username : 用户名
+     * @param phone : 电话
+     * @param email : 邮箱
      * @return  返回重复个数
      * */
     int adminCount(@Param("username") String username,@Param("phone") String phone,@Param("email") String email);
@@ -286,4 +288,53 @@ public interface AdminMapper {
      * @param checkPassword : 新密码
      * */
     void updateAdminPassword(@Param("id") int id,@Param("checkPassword") String checkPassword);
+
+    /**
+     * showAttendances : 考勤设置
+     * @param begin : 开始索引
+     * @param department : 部门
+     * @return 员工数据
+     * */
+    List<Employee> showAttendances(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * attendanceCount : 需要考勤的员工人数
+     * @param begin : 开始索引
+     * @param department : 部门
+     * @return  返回个数
+     * */
+    int attendanceCount(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * attendanceJudge : 考勤设置
+     * @param attendancesId: 员工id
+     * @param absenceRecord : 状态
+     * @param name : 姓名
+     * */
+    void attendanceJudge(@Param("attendancesId") int attendancesId,@Param("absenceRecord") String absenceRecord,@Param("name") String name);
+
+    /**
+    * showSalaries:展示薪资信息
+    * @param begin：开始索引
+    * @param department：部门
+    * @return 薪资数据
+    * */
+    List<Salary> showSalaries(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * showSalaries:展示薪资信息
+     * @param begin：开始索引
+     * @param department：部门
+     * @return 返回数据个数
+     * */
+    int salariesCount(@Param("begin") int begin,@Param("department") String department);
+
+    /**
+     * updateSalary:修改工资
+     * @param id：主键
+     * @param money：主键
+     */
+    void updateSalary(@Param("id") int id,@Param("money") double money);
+
+
 }

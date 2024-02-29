@@ -26,6 +26,7 @@
         <result column="employee_id" property="employeeId"/>
         <result column="quit_reason" property="quitReason"/>
         <result column="quit_status" property="quitStatus"/>
+        <result column="delete_status" property="deleteStatus"/>
     </resultMap>
     <resultMap id="employeeScore" type="score">
         <result column="employee_id" property="employeeId"/>
@@ -176,7 +177,6 @@
             </if>
         </where>
         limit #{begin},10;
-
     </select>
     <select id="employeesCount" resultType="java.lang.Integer">
         select count(*)
@@ -378,9 +378,71 @@
         where id = #{id};
     </update>
 
+    <select id="showAttendances" resultType="com.it.pojo.Employee">
+        SELECT t2.id, t2.username, t2.name, t2.role, t2.department, curdate() As date
+        FROM tb_employee AS t2
+                 LEFT JOIN tb_attendance AS t1
+                           ON t2.id = t1.employee_id AND t1.date = CURDATE()
+                 LEFT JOIN tb_quit AS t3
+                           ON t2.id = t3.employee_id AND t3.delete_status ='在职'
+        WHERE t1.employee_id IS NULL
+          and t3.employee_id is null
+          and t2.department like #{department}
+        limit #{begin},10;
+    </select>
+    <select id="attendanceCount" resultType="java.lang.Integer">
+        SELECT count(*)
+        FROM tb_employee AS t2
+                 LEFT JOIN tb_attendance AS t1
+                           ON t2.id = t1.employee_id AND t1.date = CURDATE()
+                 LEFT JOIN tb_quit AS t3
+                           ON t2.id = t3.employee_id AND t3.delete_status ='在职'
+        WHERE t1.employee_id IS NULL
+          and t3.employee_id IS NULL
+          and t2.department like #{department};
+    </select>
 
 
+    <insert id="attendanceJudge">
+        insert into tb_attendance (employee_id,name,date, absence_record)
+        values (#{attendancesId},#{name},curdate(),#{absenceRecord})
+    </insert>
 
+    <select id="showSalaries" resultMap="employeeSalary">
+        select id,
+               name,
+               department,
+               money,
+               curdate() AS date
+        from tb_salary
+        where employee_id in (select distinct employee_id
+                              from tb_attendance
+                              where date = curdate()
+                                and absence_record != '全勤')
+          and employee_id not in (select employee_id
+                                  from tb_quit
+                                  where delete_status = '离职')
+          and department like #{department}
+        limit #{begin},10;
+    </select>
+    <select id="salariesCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_salary
+        where employee_id in (select distinct employee_id
+                              from tb_attendance
+                              where date = curdate()
+                                and absence_record != '全勤')
+          and employee_id not in (select employee_id
+                                  from tb_quit
+                                  where delete_status = '离职')
+          and department like #{department}
+    </select>
+
+    <update id="updateSalary">
+        update tb_salary
+        set money = #{money}
+        where id = #{id};
+    </update>
 
 
 
