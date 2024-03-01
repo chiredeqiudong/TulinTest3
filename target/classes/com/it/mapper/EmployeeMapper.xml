@@ -58,7 +58,10 @@
                email,
                department
         from tb_employee
-        where username = #{username}
+        where id NOT IN (select employee_id
+                         from tb_quit
+                         where delete_status = '离职')
+          and username = #{username}
           and password = #{password};
     </select>
     <update id="updateInfo">
@@ -214,6 +217,9 @@
         from tb_quit as t1 join tb_employee as t2
         on t1.employee_id = t2.id
         <where>
+            <if test="employeeId != null">
+                and t1.id = #{employeeId}
+            </if>
             <if test="employeeId != null">
                 and quit_status != '同意'
             </if>

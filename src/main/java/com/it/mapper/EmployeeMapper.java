@@ -12,7 +12,6 @@ import java.util.List;
 public interface EmployeeMapper {
     /**
      * loginSelect:查询登录账户
-     *
      * @param username : 用户名
      * @param password : 登录密码
      * @return : 该员工数据

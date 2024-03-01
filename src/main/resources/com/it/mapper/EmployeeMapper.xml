@@ -215,8 +215,11 @@
     <select id="showQuit" resultMap="employeeQuit">
         select t1.id, employee_id,t2.name,t2.department,t2.role,quit_reason, quit_status
         from tb_quit as t1 join tb_employee as t2
-        on t1.employee_id = #{employeeId}
+        on t1.employee_id = t2.id
         <where>
+            <if test="employeeId != null">
+                and t1.id = #{employeeId}
+            </if>
             <if test="employeeId != null">
                 and quit_status != '同意'
             </if>
@@ -240,7 +243,6 @@
                 and quit_reason like #{reason}
             </if>
         </where>
-        limit #{begin},10;
     </select>
     <insert id="addQuit">
         insert into tb_quit (employee_id, quit_reason, quit_status)
