@@ -5,14 +5,16 @@ import com.it.pojo.*;
 import com.it.service.EmployeeService;
 import com.it.service.EmployeeServiceImpl;
 import com.it.util.Regex;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.*;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -25,18 +27,18 @@ import java.util.Objects;
  * EmployeeServlet:EmployeeWeb层方法处理
  */
 @WebServlet("/employee/*")
+@MultipartConfig
 public class EmployeeServlet extends MyHttpServlet {
     /**
      * employeeService:EmployeeService的实现类对象(多态？)
      */
     private final EmployeeService employeeService = new EmployeeServiceImpl();
-
+    private String url;
+    private boolean flag;
     /**
      * login:员工登录验证
      */
     public void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用login方法");
         //json:员工账号、密码、是否需要cookie、session数据
         BufferedReader reader = req.getReader();
         String employeeJson = reader.readLine();
@@ -74,8 +76,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * firstPage:首页请求
      */
     public void firstPage(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用firstPage方法");
         //获取会话技术
         HttpSession session = req.getSession();
         Employee employee = (Employee) session.getAttribute("employee");
@@ -90,13 +90,15 @@ public class EmployeeServlet extends MyHttpServlet {
      * 修改数据
      */
     public void polishInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用polishInfo方法");
         //读取json数据
         BufferedReader reader = req.getReader();
         String infoJson = reader.readLine();
         Employee employee = JSON.parseObject(infoJson, Employee.class);
-        if (Regex.phoneCheck(employee.getPhone()) || Regex.emailCheck(employee.getEmail())){
+        if (flag){
+            employee.setAvatar(url);
+            flag = false;
+        }
+        if (Regex.phoneCheck(employee.getPhone()) && Regex.emailCheck(employee.getEmail()) && Regex.userNameCheck(employee.getUsername()) && Regex.genderCheck(employee.getGender())){
             employeeService.updateInfo(employee);
             //覆盖会话
             HttpSession session = req.getSession();
@@ -114,8 +116,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 薪资信息
      */
     public void showSalary(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showSalary方法");
         //获取员工id
         String employeeId = req.getParameter("employeeId");
         int parseInt = Integer.parseInt(employeeId);
@@ -138,8 +138,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 根据员工id查找数据;
      */
     public void idSelect(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用idSelect方法");
         //获取员工id
         String employeeId = req.getParameter("employeeId");
         int parseInt = Integer.parseInt(employeeId);
@@ -154,8 +152,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 考勤信息查询
      */
     public void showAttendance(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showAttendance方法");
         //获取员工id、currentPage、
         String employeeId = req.getParameter("employeeId");
         String currentPage = req.getParameter("currentPage");
@@ -183,8 +179,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 请假信息查询
      */
     public void showLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showLeave方法");
         //获取员工id、reason、page
         String employeeId = req.getParameter("employeeId");
         int parseInt = Integer.parseInt(employeeId);
@@ -210,8 +204,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 请假申请信息查询
      */
     public void showUnLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showUnLeave方法");
         //获取员工id、reason、page
         String employeeId = req.getParameter("employeeId");
         int parseInt = Integer.parseInt(employeeId);
@@ -237,8 +229,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 撤销请假申请
      */
     public void deleteLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用`delete`Leave方法");
         //获取员工请假申请id主键
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -252,8 +242,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 添加请假申请
      */
     public void addLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addLeave方法");
         //json
         String jsonLeave = req.getReader().readLine();
         Leave leave = JSON.parseObject(jsonLeave, Leave.class);
@@ -275,8 +263,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 展示离职信息
      * */
     public void showQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showQuit方法");
         //员工id、查询原因,当前页
         String employeeId = req.getParameter("employeeId");
         int parseInt = Integer.parseInt(employeeId);
@@ -299,8 +285,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 添加离职申请
      */
     public void addQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addQuit方法");
         //json
         String jsonQuit = req.getReader().readLine();
         Quit quit = JSON.parseObject(jsonQuit, Quit.class);
@@ -322,8 +306,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 撤销离职申请
      */
     public void deleteQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteQuit方法");
         //主键数组
         String jsonQuit = req.getReader().readLine();
         int[] quitId = JSON.parseObject(jsonQuit, int[].class);
@@ -341,8 +323,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 已参加培训信息
      * */
     public void showTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showTrain方法");
         //员工id、培训名称、currentPage
         String jsonPage = req.getReader().readLine();
         Page page = JSON.parseObject(jsonPage, Page.class);
@@ -368,8 +348,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 展示培训信息
      * */
     public void showTrains(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showTrains方法");
         //培训名称、currentPage
         String jsonPage = req.getReader().readLine();
         Page page = JSON.parseObject(jsonPage, Page.class);
@@ -393,8 +371,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 添加培训
      * */
     public void addTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addTrain方法");
         //获取Json数据
         String jsonTrain = req.getReader().readLine();
         Score score = JSON.parseObject(jsonTrain, Score.class);
@@ -408,8 +384,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 判断是否参加过培训
      */
     public void judgeTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用judgeTrain方法");
         //获取Json数据
         String tempEmployeeId = req.getParameter("employeeId");
         String tempTrainId = req.getParameter("trainId");
@@ -426,8 +400,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 修改密码
      * */
     public void polishPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用polishPassword方法");
         //获取Json数据
         String tempEmployeeId = req.getParameter("employeeId");
         int employeeId = Integer.parseInt(tempEmployeeId);
@@ -442,8 +414,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 退出登录
      * */
     public void logout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用logout方法");
         // 清除认证信息,使当前会话无效
         req.getSession().invalidate();
         // 删除Cookie中的认证信息
@@ -466,8 +436,6 @@ public class EmployeeServlet extends MyHttpServlet {
      * 公告信息
      * */
     public void showAnnouncement(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showAnnouncement方法");
         //service
         List<Announcement> announcements = employeeService.showAnnouncement(0, 10);
         String jsonString = JSON.toJSONString(announcements);
@@ -475,4 +443,40 @@ public class EmployeeServlet extends MyHttpServlet {
         resp.setContentType("text/json;charset=utf-8");
         resp.getWriter().write(jsonString);
     }
+
+/**头像上传*/
+    public void uploadAvatar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 检查请求是否包含文件上传
+        if (!ServletFileUpload.isMultipartContent(req)) {
+            throw new ServletException("请求不包含文件上传");
+        }
+        // 配置上传参数
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            // 解析请求的内容提取文件数据
+            List<FileItem> formItems = upload.parseRequest(req);
+            if (formItems != null && !formItems.isEmpty()) {
+                for (FileItem item : formItems) {
+                    // 处理不在表单中的字段
+                    if (!item.isFormField()) {
+                        String fileName = new File(item.getName()).getName();
+                        String filePath = "F:\\java.code\\Test\\resource_app\\src\\main\\webapp\\img\\" + fileName;
+                        File storeFile = new File(filePath);
+                        if (!storeFile.exists()){
+                            // 保存文件到硬盘
+                            item.write(storeFile);
+                        }
+                        //生成该图片的URL
+                        url = "http://localhost:8080/resource_app/img/"+fileName;
+                        flag = true;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("捕捉到错误");
+        }
+    }
+
+
 }

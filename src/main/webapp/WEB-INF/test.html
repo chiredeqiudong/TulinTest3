@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Avatar Upload</title>
+</head>
+<body>
+<h1>Avatar Upload</h1>
+<form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="avatar" accept="image/*" required>
+    <button type="submit">Upload</button>
+</form>
+<img id="preview" src="#" alt="Avatar Preview" style="display:none;">
+
+<script>
+    const uploadForm = document.getElementById('uploadForm');
+    const preview = document.getElementById('preview');
+
+    uploadForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(uploadForm);
+        // Send the form data to the server for processing
+        // You can use fetch or XMLHttpRequest to send the data
+        // Example using fetch:
+        fetch('/upload', {
+            method: 'POST',
+            body: formData,
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                // Update the user's avatar in the database and display it on the page
+                // Example: updateUserAvatar(data.url);
+                preview.src = data.url;
+                preview.style.display = 'block';
+            })
+            .catch((error) => {
+                console.error('Error uploading avatar:', error);
+            });
+    });
+</script>
+</body>
+</html>

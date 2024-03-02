@@ -42,6 +42,21 @@ public class Regex {
         }
         String regex ="1[3-9]\\d{9}";
         return phone.matches(regex);
-
+    }
+    /**
+     * 用户名检验
+     */
+    public static boolean userNameCheck(String username){
+        if (Objects.isNull(username) || username.isEmpty()){
+            return false;
+        }
+        String regex ="[a-zA-Z0-9_-]{4,16}";
+        return username.matches(regex);
+    }
+    public static boolean genderCheck(String gender){
+        if (Objects.isNull(gender) || gender.isEmpty()){
+            return false;
+        }
+        return "男".equals(gender) || "女".equals(gender);
     }
 }

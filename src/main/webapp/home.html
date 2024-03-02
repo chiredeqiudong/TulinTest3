@@ -4,50 +4,6 @@
     <meta charset="UTF-8">
     <title>人力资源管理系统</title>
 </head>
-<style>
-    .el-header {
-        background-color: rgba(58, 227, 224, 0.76);
-        font-size: 20px;
-        justify-content: space-between;
-        align-items: center;
-        padding: 10px;
-        border-radius: 5px;
-    }
-
-    .el-main {
-        background-color: #eee;
-        text-align: left;
-        line-height: 50px;
-    }
-
-    .el-carousel__item h3 {
-        color: #475669;
-        font-size: 18px;
-        opacity: 0.75;
-        line-height: 300px;
-        margin: 0;
-    }
-
-    .el-carousel__item:nth-child(2n) {
-        background-color: #99a9bf;
-    }
-
-    .el-carousel__item:nth-child(2n+1) {
-        background-color: rgb(204, 230, 200);
-    }
-
-    .avatar-uploader .el-upload {
-        border: 1px dashed #d9d9d9;
-        border-radius: 5px;
-        cursor: pointer;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .avatar-uploader .el-upload:hover {
-        border-color: #409EFF;
-    }
-</style>
 <body>
 <div id="home">
     <!--header-->
@@ -140,11 +96,11 @@
                                 <el-form-item>
                                     <el-upload
                                             class="avatar-uploader"
-                                            action="#"
+                                            action="http://localhost:8080/resource_app/employee/uploadAvatar"
                                             :show-file-list="false"
                                             :on-success="handleAvatarSuccess"
                                             :before-upload="beforeAvatarUpload">
-                                        <img :src="info.avatar" alt="Avatar" style="width: 110px; height: 110px;"/>
+                                        <img :src="info.avatar" alt="Avatar Preview" style="width: 110px; height: 110px;"/>
                                     </el-upload>
                                 </el-form-item>
                                 <el-form-item label="用户名:" prop="username">
@@ -594,6 +550,11 @@
                                 <el-table-column
                                         label="部门"
                                         prop="department"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="身份"
+                                        prop="role"
                                         align="center">
                                 </el-table-column>
                                 <el-table-column
@@ -1288,9 +1249,9 @@
                     data: this.train
                 }).then((resp) => {
                     if (resp.data === "success") {
-                        this.message3();
+                        this.message0("参加成功",'success');
                     } else {
-                        this.message4();
+                        this.message0("不能重复参加",'error');
                     }
                 })
             },
@@ -1311,7 +1272,7 @@
                             //添加培训
                             this.addTrain(row);
                         } else {
-                            this.message4();
+                            this.message0("不能重复参加",'error');
                         }
                     })
                 }).catch(() => {
@@ -1367,7 +1328,7 @@
             },
             //头像上传
             handleAvatarSuccess(res, file) {
-                this.info.avatar = URL.createObjectURL(file.raw);
+                this.info.avatar = URL.createObjectURL(file.raw).toString();
             },
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
@@ -1452,13 +1413,6 @@
                     type: 'success'
                 });
             },
-            message4() {
-                this.$message({
-                    showClose: true,
-                    message: '不能重复参加',
-                    type: 'error'
-                });
-            },
             message5() {
                 this.$message({
                     showClose: true,
@@ -1476,6 +1430,52 @@
         }
     })
 </script>
+
+<style>
+    .el-header {
+        background-color: rgba(58, 227, 224, 0.76);
+        font-size: 20px;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .el-main {
+        background-color: #eee;
+        text-align: left;
+        line-height: 50px;
+    }
+
+    .el-carousel__item h3 {
+        color: #475669;
+        font-size: 18px;
+        opacity: 0.75;
+        line-height: 300px;
+        margin: 0;
+    }
+
+    .el-carousel__item:nth-child(2n) {
+        background-color: #99a9bf;
+    }
+
+    .el-carousel__item:nth-child(2n+1) {
+        background-color: rgb(204, 230, 200);
+    }
+
+    .avatar-uploader .el-upload {
+        border: 1px dashed #d9d9d9;
+        border-radius: 5px;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .avatar-uploader .el-upload:hover {
+        border-color: #409EFF;
+    }
+</style>
+
 
 </html>
 
