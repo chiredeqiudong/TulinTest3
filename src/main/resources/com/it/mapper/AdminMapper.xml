@@ -9,6 +9,7 @@
         <result column="base_salary" property="baseSalary"/>
         <result column="attendance_bonus" property="attendanceBonus"/>
         <result column="performance_pay" property="performancePay"/>
+        <result column="absence_Record" property="absenceRecord"/>
     </resultMap>
     <resultMap id="employeeAttendance" type="attendance">
         <result column="absence_record" property="absenceRecord"/>
@@ -368,9 +369,10 @@
     <select id="adminCount" resultType="java.lang.Integer">
         select count(*)
         from tb_admin
-        where username = #{username}
+        where id != #{id}
+                  and (username = #{username}
            or phone = #{phone}
-           or email = #{email};
+           or email = #{email});
     </select>
     <update id="updateAdminPassword">
         update tb_admin
@@ -409,40 +411,65 @@
     </insert>
 
     <select id="showSalaries" resultMap="employeeSalary">
-        select id,
-               name,
+        select t1.id,
+               t1.name,
                department,
                money,
-               curdate() AS date
-        from tb_salary
-        where employee_id in (select distinct employee_id
-                              from tb_attendance
-                              where date = curdate()
-                                and absence_record != '全勤')
-          and employee_id not in (select employee_id
-                                  from tb_quit
-                                  where delete_status = '离职')
-          and department like #{department} and send_date = curdate()
+               curdate() AS date,
+               t2.absence_record
+        from tb_salary as t1
+                 join tb_attendance as t2
+                      on t1.employee_id = t2.employee_id
+        where t1.employee_id in (select distinct employee_id
+                                 from tb_attendance
+                                 where date = curdate()
+                                   and absence_record != '全勤')
+          and t1.employee_id not in (select employee_id
+                                     from tb_quit
+                                     where delete_status = '离职')
+          and department like #{department}
+          and year(send_date) = year(curdate())
+          and month(send_date) = month(curdate())
         limit #{begin},10;
     </select>
     <select id="salariesCount" resultType="java.lang.Integer">
         select count(*)
-        from tb_salary
-        where employee_id in (select distinct employee_id
-                              from tb_attendance
-                              where date = curdate()
-                                and absence_record != '全勤')
-          and employee_id not in (select employee_id
-                                  from tb_quit
-                                  where delete_status = '离职')
-          and department like #{department} and send_date = curdate()
+        from tb_salary as t1
+                 join tb_attendance as t2
+                      on t1.employee_id = t2.employee_id
+        where t1.employee_id in (select distinct employee_id
+                                 from tb_attendance
+                                 where date = curdate()
+                                   and absence_record != '全勤')
+          and t1.employee_id not in (select employee_id
+                                     from tb_quit
+                                     where delete_status = '离职')
+          and department like #{department}
+          and year(send_date) = year(curdate())
+          and month(send_date) = month(curdate());
     </select>
+    <select id="employeeCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        where username = #{username}
+           or phone = #{phone}
+           or email = #{email};
+    </select>
+
 
     <update id="updateSalary">
         update tb_salary
         set money = #{money}
         where id = #{id};
     </update>
+    <select id="employeeCounts" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        where id != #{id}
+          and (username = #{username}
+            or phone = #{phone}
+            or email = #{email});
+    </select>
 
 
 

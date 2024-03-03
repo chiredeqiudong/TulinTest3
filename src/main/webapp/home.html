@@ -622,7 +622,7 @@
                                 </el-table-column>
                                 <el-table-column
                                         label="结束日期"
-                                        prop="startDate"
+                                        prop="endDate"
                                         align="center">
                                 </el-table-column>
                                 <el-table-column
@@ -694,7 +694,7 @@
                                 </el-table-column>
                                 <el-table-column
                                         label="结束日期"
-                                        prop="startDate"
+                                        prop="endDate"
                                         align="center">
                                 </el-table-column>
                                 <el-table-column
@@ -1095,17 +1095,21 @@
             },
             //修改个人信息
             polishInfo() {
+                this.info.id = this.employee.id;
                 axios({
                     method: "post",
                     url: "http://localhost:8080/resource_app/employee/polishInfo",
                     data: this.info,
                 }).then((resp) => {
                     if (resp.data === 'success') {
-                        //刷新数据
                         this.employee = this.info;
                     }
-                    if (resp.data === 'error'){
+                    else if (resp.data === "repetition") {
+                        this.message0("数据出现重复", 'error');
+                    }else if (resp.data === 'error'){
                         this.message0("数据格式有误",'error');
+                    }else {
+                        this.message0("修改程序错误",'error');
                     }
                 })
 

@@ -5,16 +5,22 @@ import com.it.pojo.*;
 import com.it.service.AdminService;
 import com.it.service.AdminServiceImpl;
 import com.it.util.Regex;
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -23,11 +29,14 @@ import java.util.Objects;
  */
 
 @WebServlet("/admin/*")
+@MultipartConfig
 public class AdminServlet extends MyHttpServlet {
     /**
      * adminService:AdminService的实现类对象
      */
     private final AdminService adminService = new AdminServiceImpl();
+    private String url;
+    private boolean flag;
 
     /**
      * login:管理员登录验证
@@ -364,11 +373,7 @@ public class AdminServlet extends MyHttpServlet {
             }
         }
         if (parseInt == 1) {
-            if (flag) {
-                resp.getWriter().write("update");
-            } else {
-                resp.getWriter().write("error");
-            }
+            resp.getWriter().write("update");
         }
     }
 
@@ -381,13 +386,21 @@ public class AdminServlet extends MyHttpServlet {
         //json
         String jsonTrain = req.getReader().readLine();
         Employee employee = JSON.parseObject(jsonTrain, Employee.class);
-        if (employee.getUsername().isEmpty() || employee.getName().isEmpty()) {
-            resp.getWriter().write("error");
+        String phone = employee.getPhone();
+        String email = employee.getEmail();
+        String username = employee.getUsername();
+        //数据格式
+        if (Regex.userNameCheck(username) && Regex.phoneCheck(phone) && Regex.emailCheck(email)) {
+            //判断重复
+            int count = adminService.employeeCount(username, phone, email);
+            if (count == 0) {
+                //service
+                employee.setPassword("123456");
+                adminService.addEmployee(employee);
+                resp.getWriter().write("success");
+            }
         } else {
-            //service
-            employee.setPassword("123456");
-            adminService.addEmployee(employee);
-            resp.getWriter().write("success");
+            resp.getWriter().write("error");
         }
 
     }
@@ -418,13 +431,24 @@ public class AdminServlet extends MyHttpServlet {
         //json
         String jsonEmployee = req.getReader().readLine();
         Employee employee = JSON.parseObject(jsonEmployee, Employee.class);
+        String gender = employee.getGender();
+        String phone = employee.getPhone();
+        String email = employee.getEmail();
+        String username = employee.getUsername();
+        int id = employee.getId();
         //service
-        if (employee.getUsername().isEmpty() || employee.getName().isEmpty()) {
-            resp.getWriter().write("error");
+        if (Regex.phoneCheck(phone) && Regex.genderCheck(gender) &&  Regex.emailCheck(email) && Regex.userNameCheck(username)) {
+            //判断重复
+            int count = adminService.employeesCount(id,username, phone, email);
+            if (count == 0) {
+                adminService.updateEmployee(employee);
+                resp.getWriter().write("success");
+            } else {
+                resp.getWriter().write("repetition");
+            }
+
         } else {
-            //service
-            adminService.updateEmployee(employee);
-            resp.getWriter().write("success");
+            resp.getWriter().write("error");
         }
     }
 
@@ -599,12 +623,20 @@ public class AdminServlet extends MyHttpServlet {
         String phone = admin.getPhone();
         String email = admin.getEmail();
         String username = admin.getUsername();
+        int id = admin.getId();
+        if (flag){
+            admin.setAvatar(url);
+            flag = false;
+        }
         //service
-        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && !username.isEmpty()) {
-            //判断用户名是否重复
-            int count = adminService.adminCount(username, phone, email);
-            if (count == 0 || count == 1) {
+        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && Regex.userNameCheck(username)) {
+            //判断重复
+            int count = adminService.adminCount(id,username, phone, email);
+            if (count == 0) {
                 adminService.updateAdminInfo(admin);
+                //覆盖会话
+                HttpSession session = req.getSession();
+                session.setAttribute("admin", admin);
                 resp.getWriter().write("success");
             } else {
                 resp.getWriter().write("repetition");
@@ -628,7 +660,7 @@ public class AdminServlet extends MyHttpServlet {
         String password = admin.getPassword();
         String checkPassword = admin.getCheckPassword();
         //数据判断
-        if (password.equals(checkPassword) && !password.isEmpty()) {
+        if (password.equals(checkPassword) && !checkPassword.isEmpty()) {
             //service
             adminService.updateAdminPassword(id, checkPassword);
             //响应
@@ -738,19 +770,55 @@ public class AdminServlet extends MyHttpServlet {
         //测试是否调用该方法
         System.out.println("调用updateSalary方法");
         //数据处理
-        String parameter1 = req.getParameter("id");
-        int id = Integer.parseInt(parameter1);
-        String parameter2 = req.getParameter("money");
-        double money = Double.parseDouble(parameter2);
+        String jsonSalary = req.getReader().readLine();
+        Salary salary = JSON.parseObject(jsonSalary, Salary.class);
+        double money = salary.getMoney();
+        int id = salary.getId();
+        String absenceRecord = salary.getAbsenceRecord();
         //service
         double basicMoney = 3100.0;
         if (money < basicMoney){
             resp.getWriter().write("error");
         }
         else {
-            adminService.updateSalary(id,money);
+            adminService.updateSalary(id,money,absenceRecord);
             resp.getWriter().write("success");
         }
     }
+
+    /**头像上传*/
+    public void uploadAvatar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        // 检查请求是否包含文件上传
+        if (!ServletFileUpload.isMultipartContent(req)) {
+            throw new ServletException("请求不包含文件上传");
+        }
+        // 配置上传参数
+        DiskFileItemFactory factory = new DiskFileItemFactory();
+        ServletFileUpload upload = new ServletFileUpload(factory);
+        try {
+            // 解析请求的内容提取文件数据
+            List<FileItem> formItems = upload.parseRequest(req);
+            if (formItems != null && !formItems.isEmpty()) {
+                for (FileItem item : formItems) {
+                    // 处理不在表单中的字段
+                    if (!item.isFormField()) {
+                        String fileName = new File(item.getName()).getName();
+                        String filePath = "F:\\java.code\\Test\\resource_app\\src\\main\\webapp\\img\\" + fileName;
+                        File storeFile = new File(filePath);
+                        if (!storeFile.exists()){
+                            // 保存文件到硬盘
+                            item.write(storeFile);
+                        }
+                        //生成该图片的URL
+                        url = "http://localhost:8080/resource_app/img/"+fileName;
+                        flag = true;
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            System.out.println("捕捉到错误");
+        }
+    }
+
 }
 

@@ -1,6 +1,7 @@
 package com.it.service;
 
 import com.it.mapper.AdminMapper;
+import com.it.mapper.EmployeeMapper;
 import com.it.pojo.*;
 import com.it.util.SqlSessionFactoryUtil;
 import org.apache.ibatis.session.SqlSession;
@@ -514,14 +515,13 @@ public class AdminServiceImpl implements AdminService{
 
     /**
      * adminCount : 判断用户名是否重复
-     * @param username : 用户名
      * @return 返回重复个数
      */
     @Override
-    public int adminCount(String username,String phone,String email) {
+    public int adminCount(int id,String username,String phone,String email) {
         SqlSession sqlSession = sqlFactory.openSession();
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
-        int count = mapper.adminCount(username,phone,email);
+        int count = mapper.adminCount(id,username,phone,email);
         sqlSession.close();
         return count;
     }
@@ -613,15 +613,54 @@ public class AdminServiceImpl implements AdminService{
      * updateSalary:修改工资
      * @param id    ：主键
      * @param money ：工资
+     * @param absenceRecord :考勤记录
      */
     @Override
-    public void updateSalary(int id, double money) {
+    public void updateSalary(int id, double money,String absenceRecord) {
         SqlSession sqlSession = sqlFactory.openSession();
         AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
-        money -=100;
+        switch (absenceRecord) {
+            case "迟到" -> money -= 30;
+            case "早退" -> money -= 50;
+            case "缺勤" -> money -= 100;
+            default -> System.out.println("无考勤记录");
+        }
         mapper.updateSalary(id,money);
         sqlSession.commit();
         sqlSession.close();
+    }
+
+    /**
+     * employeeCount : 判断是否重复
+     * @param username : 用户名
+     * @param phone    : 电话
+     * @param email    : 邮箱
+     * @return 返回重复个数
+     */
+    @Override
+    public int employeeCount(String username, String phone, String email) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        int count = mapper.employeeCount(username,phone,email);
+        sqlSession.close();
+        return count;
+    }
+
+    /**
+     * employeesCount : 判断用户名是否重复
+     * @param id       : 主键
+     * @param username : 用户名
+     * @param phone    : 电话
+     * @param email    : 邮箱
+     * @return 返回重复个数
+     */
+    @Override
+    public int employeesCount(int id, String username, String phone, String email) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        AdminMapper mapper = sqlSession.getMapper(AdminMapper.class);
+        int count = mapper.employeeCounts(id,username,phone,email);
+        sqlSession.close();
+        return count;
     }
 
     /**

@@ -873,7 +873,7 @@
                                 <el-form-item>
                                     <el-upload
                                             class="avatar-uploader"
-                                            action="#"
+                                            action="http://localhost:8080/resource_app/admin/uploadAvatar"
                                             :show-file-list="false"
                                             :on-success="adminAvatarSuccess"
                                             :before-upload="adminAvatarUpload">
@@ -1057,6 +1057,11 @@
                                 <el-table-column
                                         label="日期"
                                         prop="date"
+                                        align="center">
+                                </el-table-column>
+                                <el-table-column
+                                        label="考勤记录"
+                                        prop="absenceRecord"
                                         align="center">
                                 </el-table-column>
                                 <el-table-column
@@ -1265,6 +1270,11 @@
                     tollCount: '', //总数
                     departmentL:'',
                 }, //分页条数据
+                reduceSalary:{
+                    id:'',
+                    money:'',
+                    absenceRecord:''
+                },
 
                 //对话框width
                 formLabelWidth: '120px',
@@ -1498,7 +1508,7 @@
                         this.message("添加成功", 'success');
                         this.showTrain();
                     } else {
-                        this.tainVisible = false;
+                        this.trainVisible = false;
                         this.message("添加失败", 'error');
                     }
                 })
@@ -1613,9 +1623,9 @@
                         this.employeeVisible = false;
                         this.message("添加成功", 'success');
                         this.showEmployees();
-                    } else {
+                    } else if (resp.data === "error"){
                         this.employeeVisible = false;
-                        this.message("添加失败", 'error');
+                        this.message("数据格式有误", 'error');
                     }
                 })
             },
@@ -1654,8 +1664,12 @@
                         this.message("修改成功", 'success');
                         this.employeeVisible2 = false;
                         this.showEmployees();
-                    } else {
-                        this.message("修改失败", 'error');
+                    } else if (resp.data === "error") {
+                        this.employeeVisible2 = false;
+                        this.message("数据格式有误", 'error');
+                    } else if (resp.data === "repetition") {
+                        this.employeeVisible2 = false;
+                        this.message("数据出现重复", 'error');
                     }
                 })
             },
@@ -1820,11 +1834,13 @@
                     data: this.adminInfo,
                 }).then((resp) => {
                     if (resp.data === "success") {
+                        //数据刷新
+                        this.admin = this.adminInfo;
                         this.message("修改成功", 'success');
                     } else if (resp.data === "error") {
                         this.message("数据格式有误", 'error');
                     } else if (resp.data === "repetition") {
-                        this.message("数据重复", 'error');
+                        this.message("数据出现重复", 'error');
                     } else {
                         this.message("修改错误", 'error');
                     }
@@ -1922,13 +1938,17 @@
                 this.showSalaries();
             },
             updateSalary(row){ //薪资处罚,
+                this.reduceSalary.id = row.id;
+                this.reduceSalary.money = row.money;
+                this.reduceSalary.absenceRecord = row.absenceRecord;
                 axios({
-                    method: "get",
-                    url: "http://localhost:8080/resource_app/admin/updateSalary?id="+row.id+"&money="+row.money,
+                    method: "post",
+                    url: "http://localhost:8080/resource_app/admin/updateSalary",
+                    data:this.reduceSalary
                 }).then((resp) => {
                     if (resp.data === "success"){
                         this.showSalaries();
-                        this.message("处罚成功-100元",'success');
+                        this.message("处罚成功",'success');
                     }
                     else if(resp.data === "error"){
                         this.message("达到处罚上限",'error');
@@ -1940,7 +1960,7 @@
 
             //头像上传
             adminAvatarSuccess(res, file) {
-                this.adminInfo.avatar = URL.createObjectURL(file.raw);
+                this.adminInfo.avatar = URL.createObjectURL(file.raw).toString();
             },
             adminAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';

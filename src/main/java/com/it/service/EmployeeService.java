@@ -24,6 +24,16 @@ public interface EmployeeService {
     void updateInfo(Employee employee);
 
     /**
+     * employeeCount : 判断是否重复
+     * @param username : 用户名
+     * @param phone : 电话
+     * @param email : 邮箱
+     * @param id : 主键
+     * @return  返回重复个数
+     * */
+    int employeeCount(int id,String username,String phone,String email);
+
+    /**
      * updatePassword:修改个人密码
      * @param employeeId : 员工id
      * @param newPassword : 新密码

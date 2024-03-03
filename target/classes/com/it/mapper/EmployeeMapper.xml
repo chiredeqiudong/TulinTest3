@@ -316,5 +316,13 @@
         order by create_time desc
         limit #{begin},#{size};
     </select>
+    <select id="employeeCount" resultType="java.lang.Integer">
+        select count(*)
+        from tb_employee
+        where id != #{id}
+          and (username = #{username}
+            or phone = #{phone}
+            or email = #{email});
+    </select>
 
 </mapper>

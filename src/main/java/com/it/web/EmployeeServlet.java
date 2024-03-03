@@ -94,17 +94,29 @@ public class EmployeeServlet extends MyHttpServlet {
         BufferedReader reader = req.getReader();
         String infoJson = reader.readLine();
         Employee employee = JSON.parseObject(infoJson, Employee.class);
+        String phone = employee.getPhone();
+        String gender = employee.getGender();
+        String email = employee.getEmail();
+        String username = employee.getUsername();
+        int id = employee.getId();
         if (flag){
             employee.setAvatar(url);
             flag = false;
         }
-        if (Regex.phoneCheck(employee.getPhone()) && Regex.emailCheck(employee.getEmail()) && Regex.userNameCheck(employee.getUsername()) && Regex.genderCheck(employee.getGender())){
-            employeeService.updateInfo(employee);
-            //覆盖会话
-            HttpSession session = req.getSession();
-            session.setAttribute("employee", employee);
-            //响应成功标识
-            resp.getWriter().write("success");
+        if (Regex.phoneCheck(phone) && Regex.emailCheck(email) && Regex.userNameCheck(username) && Regex.genderCheck(gender)){
+            //判断是否重复
+            int count = employeeService.employeeCount(id,username, phone, email);
+            if (count == 0){
+                employeeService.updateInfo(employee);
+                //覆盖会话
+                HttpSession session = req.getSession();
+                session.setAttribute("employee", employee);
+                //响应成功标识
+                resp.getWriter().write("success");
+            }
+            else {
+                resp.getWriter().write("repetition");
+            }
         }
         else {
             resp.getWriter().write("error");
@@ -444,7 +456,7 @@ public class EmployeeServlet extends MyHttpServlet {
         resp.getWriter().write(jsonString);
     }
 
-/**头像上传*/
+    /**头像上传*/
     public void uploadAvatar(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         // 检查请求是否包含文件上传
         if (!ServletFileUpload.isMultipartContent(req)) {

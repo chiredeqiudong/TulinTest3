@@ -23,6 +23,15 @@ public class Salary {
     private double attendanceBonus;
     private double performancePay;
     private Date date;
+    private String absenceRecord;
+
+    public String getAbsenceRecord() {
+        return absenceRecord;
+    }
+
+    public void setAbsenceRecord(String absenceRecord) {
+        this.absenceRecord = absenceRecord;
+    }
 
     public Date getDate() {
         return date;

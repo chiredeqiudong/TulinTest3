@@ -205,9 +205,10 @@ public interface AdminService {
      * @param username : 用户名
      * @param phone : 电话
      * @param email : 邮箱
+     * @param id : 主键
      * @return  返回重复个数
      * */
-    int adminCount(String username,String phone,String email);
+    int adminCount(int id,String username,String phone,String email);
 
     /**
      * updateAdminPassword : 修爱密码
@@ -242,8 +243,29 @@ public interface AdminService {
      * updateSalary:修改工资
      * @param id：主键
      * @param  money：工资
+     * @param  absenceRecord：具体扣费
      */
-    void updateSalary(int id,double money);
+    void updateSalary(int id,double money,String absenceRecord);
+
+
+    /**
+     * employeeCount : 判断是否重复
+     * @param username : 用户名
+     * @param phone : 电话
+     * @param email : 邮箱
+     * @return  返回重复个数
+     * */
+    int employeeCount(String username,String phone,String email);
+
+    /**
+     * employeesCount : 判断用户名是否重复
+     * @param username : 用户名
+     * @param phone : 电话
+     * @param email : 邮箱
+     * @param id : 主键
+     * @return  返回重复个数
+     * */
+    int employeesCount(int id,String username,String phone,String email);
 
 
 

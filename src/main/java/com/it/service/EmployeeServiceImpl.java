@@ -1,9 +1,11 @@
 package com.it.service;
 
 
+import com.it.mapper.AdminMapper;
 import com.it.mapper.EmployeeMapper;
 import com.it.pojo.*;
 import com.it.util.SqlSessionFactoryUtil;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
@@ -44,6 +46,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         mapper.updateInfo(employee);
         sqlSession.commit();
         sqlSession.close();
+    }
+
+    /**
+     * employeeCount : 判断是否重复
+     * @param id       : 主键
+     * @param username : 用户名
+     * @param phone    : 电话
+     * @param email    : 邮箱
+     * @return 返回重复个数
+     */
+    @Override
+    public int employeeCount(int id, String username, String phone, String email) {
+        SqlSession sqlSession = sqlFactory.openSession();
+        EmployeeMapper mapper = sqlSession.getMapper(EmployeeMapper.class);
+        int count = mapper.employeeCount(id,username,phone,email);
+        sqlSession.close();
+        return count;
     }
 
     /**
