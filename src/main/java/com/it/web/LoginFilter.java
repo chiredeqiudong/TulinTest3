@@ -27,7 +27,7 @@ public class LoginFilter implements Filter {
         HttpServletRequest req = (HttpServletRequest) servletRequest;
         HttpServletResponse resp = (HttpServletResponse) servletResponse;
         String uri = req.getRequestURI();
-        String name = "login";
+         String name = "login";
         //包含login的请求
         if (uri.contains(name)){
             filterChain.doFilter(req, resp);

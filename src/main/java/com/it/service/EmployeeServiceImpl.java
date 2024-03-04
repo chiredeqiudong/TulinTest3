@@ -1,11 +1,9 @@
 package com.it.service;
 
 
-import com.it.mapper.AdminMapper;
 import com.it.mapper.EmployeeMapper;
 import com.it.pojo.*;
 import com.it.util.SqlSessionFactoryUtil;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 

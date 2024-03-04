@@ -42,8 +42,6 @@ public class AdminServlet extends MyHttpServlet {
      * login:管理员登录验证
      */
     public void login(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用login方法");
         //json:账号、密码、是否需要cookie、session数据
         BufferedReader reader = req.getReader();
         String adminJson = reader.readLine();
@@ -81,8 +79,6 @@ public class AdminServlet extends MyHttpServlet {
      * adminHome:首页请求
      */
     public void adminHome(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用adminHome方法");
         //获取会话技术
         HttpSession session = req.getSession();
         Admin admin = (Admin) session.getAttribute("admin");
@@ -97,8 +93,6 @@ public class AdminServlet extends MyHttpServlet {
      * adminSelect:查询admin数据
      */
     public void adminSelect(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用adminSelect方法");
         //数据处理
         String adminId = req.getParameter("adminId");
         int parseInt = Integer.parseInt(adminId);
@@ -114,8 +108,6 @@ public class AdminServlet extends MyHttpServlet {
      * showAnnounce:展示公告信息
      */
     public void showAnnounce(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showAnnounce方法");
         //数据处理
         String jsonAnnounce = req.getReader().readLine();
         Page page = JSON.parseObject(jsonAnnounce, Page.class);
@@ -131,8 +123,6 @@ public class AdminServlet extends MyHttpServlet {
      * 添加公告数据
      */
     public void addAnnounce(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addAnnounce方法");
         //json
         String jsonAnnounce = req.getReader().readLine();
         Announcement announcement = JSON.parseObject(jsonAnnounce, Announcement.class);
@@ -150,8 +140,6 @@ public class AdminServlet extends MyHttpServlet {
      * 删除公告
      */
     public void deleteAnnounce(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteAnnounce方法");
         //数据
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -164,8 +152,6 @@ public class AdminServlet extends MyHttpServlet {
      * 数据回显
      */
     public void selectAnnounce(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用selectAnnounce方法");
         //数据
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -181,8 +167,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改数据
      */
     public void updateAnnounce(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateAnnounce方法");
         //json
         String jsonAnnounce = req.getReader().readLine();
         Announcement announcement = JSON.parseObject(jsonAnnounce, Announcement.class);
@@ -200,8 +184,6 @@ public class AdminServlet extends MyHttpServlet {
      * 批量删除数据
      */
     public void deleteAnnounces(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteAnnounces方法");
         //主键数组
         String jsonAnnounces = req.getReader().readLine();
         int[] announcesId = JSON.parseObject(jsonAnnounces, int[].class);
@@ -219,8 +201,6 @@ public class AdminServlet extends MyHttpServlet {
      * showTrain:展示培训信息
      */
     public void showTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showTrain方法");
         //数据处理
         String jsonTrain = req.getReader().readLine();
         Page page = JSON.parseObject(jsonTrain, Page.class);
@@ -236,8 +216,6 @@ public class AdminServlet extends MyHttpServlet {
      * 添加培训数据
      */
     public void addTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addTrain方法");
         //json
         String jsonTrain = req.getReader().readLine();
         Train train = JSON.parseObject(jsonTrain, Train.class);
@@ -255,8 +233,6 @@ public class AdminServlet extends MyHttpServlet {
      * 删除培训
      */
     public void deleteTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteTrain方法");
         //数据
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -269,8 +245,6 @@ public class AdminServlet extends MyHttpServlet {
      * 数据回显
      */
     public void selectTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用selectTrain方法");
         //数据
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -286,8 +260,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改数据
      */
     public void updateTrain(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateTrain方法");
         //json
         String jsonTrain = req.getReader().readLine();
         Train train = JSON.parseObject(jsonTrain, Train.class);
@@ -305,8 +277,6 @@ public class AdminServlet extends MyHttpServlet {
      * 批量删除数据
      */
     public void deleteTrains(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteTrains方法");
         //主键数组
         String jsonTrains = req.getReader().readLine();
         int[] trainsId = JSON.parseObject(jsonTrains, int[].class);
@@ -324,8 +294,6 @@ public class AdminServlet extends MyHttpServlet {
      * 展示员工信息
      */
     public void showEmployees(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showEmployees方法");
         //数据处理
         String jsonEmployee = req.getReader().readLine();
         Page page = JSON.parseObject(jsonEmployee, Page.class);
@@ -354,8 +322,6 @@ public class AdminServlet extends MyHttpServlet {
      * 添加数据验证
      */
     public void selectEmployeeByData(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用selectEmployeeByData方法");
         //数据
         String readLine = req.getReader().readLine();
         Employee employee = JSON.parseObject(readLine, Employee.class);
@@ -381,8 +347,6 @@ public class AdminServlet extends MyHttpServlet {
      * 注册员工数据
      */
     public void addEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用addEmployee方法");
         //json
         String jsonTrain = req.getReader().readLine();
         Employee employee = JSON.parseObject(jsonTrain, Employee.class);
@@ -409,8 +373,6 @@ public class AdminServlet extends MyHttpServlet {
      * 数据回显
      */
     public void selectEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用selectEmployee方法");
         //数据
         String id = req.getParameter("id");
         int parseInt = Integer.parseInt(id);
@@ -426,8 +388,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改数据
      */
     public void updateEmployee(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateEmployee方法");
         //json
         String jsonEmployee = req.getReader().readLine();
         Employee employee = JSON.parseObject(jsonEmployee, Employee.class);
@@ -447,7 +407,8 @@ public class AdminServlet extends MyHttpServlet {
                 resp.getWriter().write("repetition");
             }
 
-        } else {
+        }
+        else {
             resp.getWriter().write("error");
         }
     }
@@ -456,8 +417,6 @@ public class AdminServlet extends MyHttpServlet {
      * 批量删除数据
      */
     public void deleteEmployees(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用deleteEmployees方法");
         //主键数组
         String jsonEmployees = req.getReader().readLine();
         int[] employeesId = JSON.parseObject(jsonEmployees, int[].class);
@@ -475,8 +434,6 @@ public class AdminServlet extends MyHttpServlet {
      * 展示请假信息
      */
     public void showLeaves(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showLeaves方法");
         //数据处理
         String jsonLeaves = req.getReader().readLine();
         Page page = JSON.parseObject(jsonLeaves, Page.class);
@@ -493,8 +450,6 @@ public class AdminServlet extends MyHttpServlet {
      * 请假审核
      */
     public void judgeLeave(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用judgeLeave方法");
         //数据处理
         String parameter1 = req.getParameter("value");
         String parameter2 = req.getParameter("id");
@@ -516,8 +471,6 @@ public class AdminServlet extends MyHttpServlet {
      * 展示离职申请
      */
     public void showQuits(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showQuits方法");
         //数据处理
         String jsonQuits = req.getReader().readLine();
         Page page = JSON.parseObject(jsonQuits, Page.class);
@@ -533,8 +486,6 @@ public class AdminServlet extends MyHttpServlet {
      * 离职审核
      */
     public void judgeQuit(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用judgeQuit方法");
         //数据处理
         String parameter1 = req.getParameter("value");
         String parameter2 = req.getParameter("id");
@@ -558,8 +509,6 @@ public class AdminServlet extends MyHttpServlet {
      * 展示可以设置培训成绩的信息
      */
     public void showScores(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showScores方法");
         //数据处理
         String jsonScores = req.getReader().readLine();
         Page page = JSON.parseObject(jsonScores, Page.class);
@@ -575,8 +524,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改培训成绩的信息
      */
     public void updateScore(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateScore方法");
         //数据处理
         String jsonScore = req.getReader().readLine();
         Score scoreTable = JSON.parseObject(jsonScore, Score.class);
@@ -598,8 +545,6 @@ public class AdminServlet extends MyHttpServlet {
      * 展示管理员的信息
      */
     public void showAdminInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showAdminInfo方法");
         //数据处理
         String parameter = req.getParameter("id");
         int id = Integer.parseInt(parameter);
@@ -615,8 +560,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改管理员的信息
      */
     public void updateAdminInfo(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateAdminInfo方法");
         //数据处理
         String jsonAdmin = req.getReader().readLine();
         Admin admin = JSON.parseObject(jsonAdmin, Admin.class);
@@ -651,8 +594,6 @@ public class AdminServlet extends MyHttpServlet {
      * 修改管理员密码
      */
     public void updateAdminPassword(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateAdminPassword方法");
         //数据处理
         String jsonPassword = req.getReader().readLine();
         Admin admin = JSON.parseObject(jsonPassword, Admin.class);
@@ -675,8 +616,6 @@ public class AdminServlet extends MyHttpServlet {
      * 退出登录
      */
     public void adminLogout(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用adminLogout方法");
         // 清除认证信息,使当前会话无效
         req.getSession().invalidate();
         // 删除Cookie中的认证信息
@@ -699,8 +638,6 @@ public class AdminServlet extends MyHttpServlet {
      * 考勤展示
      */
     public void showAttendances(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showAttendances方法");
         //数据处理
         String jsonAttendances = req.getReader().readLine();
         Page page = JSON.parseObject(jsonAttendances, Page.class);
@@ -716,8 +653,6 @@ public class AdminServlet extends MyHttpServlet {
      * 考勤设置
      */
     public void attendanceJudge(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用attendanceJudge方法");
         //数据处理
         String parameter = req.getParameter("value");
         String name = req.getParameter("name");
@@ -750,8 +685,6 @@ public class AdminServlet extends MyHttpServlet {
      * 薪资处罚
      */
     public void showSalaries(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用showSalaries方法");
         //数据处理
         String jsonAttendances = req.getReader().readLine();
         Page page = JSON.parseObject(jsonAttendances, Page.class);
@@ -767,8 +700,6 @@ public class AdminServlet extends MyHttpServlet {
      * 薪资处罚
      */
     public void updateSalary(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        //测试是否调用该方法
-        System.out.println("调用updateSalary方法");
         //数据处理
         String jsonSalary = req.getReader().readLine();
         Salary salary = JSON.parseObject(jsonSalary, Salary.class);

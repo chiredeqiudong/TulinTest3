@@ -351,6 +351,7 @@ public interface AdminMapper {
      * @param username : 用户名
      * @param phone : 电话
      * @param email : 邮箱
+     * @param id : 主键
      * @return  返回重复个数
      * */
     int employeeCounts(@Param("id") int id,@Param("username") String username,@Param("phone") String phone,@Param("email") String email);
